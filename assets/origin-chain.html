@@ -1,0 +1,1387 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>From Nothing to the Last Line</title>
+<meta name="description" content="A scrolling walk through the Observer Patch Holography origin chain: from the meaning of nothing, through the three axioms, to the reconstruction ladder that ends at the Lagrangian.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap">
+<style>
+/* ---------------------------------------------------------------------
+   From Nothing to the Last Line
+   A reading surface for the OPH origin chain.
+
+   Palette is teal-biased ink on cool paper. One color, the clay flag,
+   is reserved for a single job: marking what the corpus does not claim
+   to have proved. It never appears as decoration.
+   --------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+
+  --paper:      #F2F4F3;
+  --surface:    #FAFBFA;
+  --surface-2:  #EAEEEC;
+  --ink:        #131F1E;
+  --ink-soft:   #4C5C5A;
+  --ink-faint:  #778785;
+  --rule:       #D2DBD9;
+  --rule-soft:  #E2E8E6;
+  --accent:     #12524E;
+  --accent-2:   #2F807A;
+  --accent-wash:#E1EDEB;
+  --flag:       #8E4F2B;
+  --flag-wash:  #F2E7DE;
+  --flag-rule:  #DCC3AE;
+
+  --measure: 34rem;
+  --rail: 13rem;
+
+  --step--1: clamp(0.76rem, 0.74rem + 0.1vw, 0.82rem);
+  --step-0:  clamp(1.03rem, 1rem + 0.16vw, 1.12rem);
+  --step-1:  clamp(1.22rem, 1.15rem + 0.35vw, 1.4rem);
+  --step-2:  clamp(1.5rem, 1.35rem + 0.75vw, 1.95rem);
+  --step-3:  clamp(2.1rem, 1.7rem + 2vw, 3.4rem);
+
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper:      #0E1615;
+    --surface:    #141E1D;
+    --surface-2:  #1A2625;
+    --ink:        #E5EBE9;
+    --ink-soft:   #9DACA9;
+    --ink-faint:  #71807D;
+    --rule:       #2A3836;
+    --rule-soft:  #1F2C2B;
+    --accent:     #6FC2B7;
+    --accent-2:   #4FA89D;
+    --accent-wash:#152927;
+    --flag:       #DB9764;
+    --flag-wash:  #241A13;
+    --flag-rule:  #4A362A;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper:      #0E1615;
+  --surface:    #141E1D;
+  --surface-2:  #1A2625;
+  --ink:        #E5EBE9;
+  --ink-soft:   #9DACA9;
+  --ink-faint:  #71807D;
+  --rule:       #2A3836;
+  --rule-soft:  #1F2C2B;
+  --accent:     #6FC2B7;
+  --accent-2:   #4FA89D;
+  --accent-wash:#152927;
+  --flag:       #DB9764;
+  --flag-wash:  #241A13;
+  --flag-rule:  #4A362A;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Spectral, "Iowan Old Style", Palatino, Georgia, serif;
+  font-size: var(--step-0);
+  font-weight: 400;
+  line-height: 1.62;
+  -webkit-text-size-adjust: 100%;
+}
+
+img, svg, canvas { max-width: 100%; }
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+a:focus-visible, input:focus-visible, button:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 3px;
+}
+
+/* --- shell ------------------------------------------------------------ */
+
+.shell {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  max-width: 62rem;
+  margin: 0 auto;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 62rem) {
+  .shell {
+    grid-template-columns: var(--rail) minmax(0, 1fr);
+    column-gap: 3.5rem;
+    padding-inline: 2rem;
+  }
+}
+
+.flow { min-width: 0; }
+.flow > * { max-width: var(--measure); }
+.flow > .bleed { max-width: none; }
+
+/* --- rail ------------------------------------------------------------- */
+
+.rail { display: none; }
+
+@media (min-width: 62rem) {
+  .rail {
+    display: block;
+    grid-column: 1;
+    align-self: start;
+    position: sticky;
+    top: calc(env(safe-area-inset-top, 0px) + 2.5rem);
+    padding-block: 0.5rem 2rem;
+  }
+}
+
+.rail-title {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 1rem;
+}
+
+.rail-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-left: 1px solid var(--rule);
+}
+
+.rail-list a {
+  display: block;
+  padding: 0.34rem 0 0.34rem 1rem;
+  margin-left: -1px;
+  border-left: 2px solid transparent;
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.73rem;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+  color: var(--ink-faint);
+  text-decoration: none;
+  transition: color 120ms linear, border-color 120ms linear;
+}
+.rail-list a:hover { color: var(--ink); }
+.rail-list a[aria-current="true"] {
+  color: var(--accent);
+  border-left-color: var(--accent);
+}
+
+/* --- hero ------------------------------------------------------------- */
+
+.hero {
+  grid-column: 1 / -1;
+  padding-block: clamp(2.5rem, 6vw, 5rem) clamp(2rem, 5vw, 3.5rem);
+  border-bottom: 1px solid var(--rule);
+  display: grid;
+  gap: clamp(1.75rem, 4vw, 3rem);
+  align-items: center;
+}
+
+@media (min-width: 48rem) {
+  .hero { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); }
+}
+
+.eyebrow {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  margin: 0 0 1.1rem;
+}
+
+h1 {
+  font-size: var(--step-3);
+  font-weight: 300;
+  line-height: 1.03;
+  letter-spacing: -0.022em;
+  text-wrap: balance;
+  margin: 0 0 1.2rem;
+}
+h1 em { font-style: italic; color: var(--accent); }
+
+.standfirst {
+  font-size: var(--step-1);
+  font-weight: 300;
+  line-height: 1.48;
+  color: var(--ink-soft);
+  margin: 0 0 1.5rem;
+  max-width: 30rem;
+}
+
+.byline {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.72rem;
+  line-height: 1.7;
+  color: var(--ink-faint);
+  margin: 0;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--rule);
+  max-width: 30rem;
+}
+
+/* --- carrier figure --------------------------------------------------- */
+
+.carrier { margin: 0; }
+
+.carrier-frame {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  max-width: 21rem;
+  margin-inline: auto;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+}
+.carrier-frame canvas { display: block; width: 100%; height: 100%; }
+
+.carrier-counts {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.55rem 0.75rem;
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  border-top: 1px solid var(--rule-soft);
+  background: var(--surface);
+}
+.carrier-counts b { color: var(--accent); font-weight: 600; }
+
+.carrier figcaption {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.68rem;
+  line-height: 1.6;
+  color: var(--ink-faint);
+  margin-top: 0.85rem;
+  max-width: 21rem;
+  margin-inline: auto;
+}
+
+/* --- sections --------------------------------------------------------- */
+
+.station {
+  grid-column: 1 / -1;
+  padding-block: clamp(2.75rem, 6vw, 4.5rem);
+  border-bottom: 1px solid var(--rule);
+}
+@media (min-width: 62rem) {
+  .station { grid-column: 2; }
+}
+.station:last-of-type { border-bottom: 0; }
+
+.station-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  margin-bottom: 1.6rem;
+}
+
+.station-index {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--accent-2);
+  flex: none;
+  padding-top: 0.35rem;
+}
+
+h2 {
+  font-size: var(--step-2);
+  font-weight: 300;
+  line-height: 1.16;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  margin: 0;
+}
+
+h3 {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 2.4rem 0 0.9rem;
+}
+
+p { margin: 0 0 1.1rem; }
+p:last-child { margin-bottom: 0; }
+
+.lede { font-size: var(--step-1); font-weight: 300; line-height: 1.5; color: var(--ink-soft); }
+
+.quiet { color: var(--ink-soft); }
+
+.pull {
+  font-size: var(--step-1);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.45;
+  color: var(--accent);
+  border-left: 2px solid var(--accent);
+  padding-left: 1.1rem;
+  margin: 1.8rem 0;
+}
+
+.formula {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
+  text-align: center;
+  color: var(--accent);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 1rem 0.9rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+.formula small {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  color: var(--ink-faint);
+}
+
+/* --- the flag: reserved for unproved things --------------------------- */
+
+.flag {
+  border-left: 2px solid var(--flag);
+  background: var(--flag-wash);
+  padding: 0.95rem 1.1rem;
+  margin: 1.6rem 0;
+}
+.flag-label {
+  display: block;
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--flag);
+  margin-bottom: 0.45rem;
+}
+.flag p { font-size: 0.95rem; line-height: 1.55; margin-bottom: 0.7rem; }
+.flag p:last-child { margin-bottom: 0; }
+
+/* --- nothing: the three candidates ------------------------------------ */
+
+.candidates {
+  display: grid;
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  margin: 1.8rem 0;
+}
+@media (min-width: 40rem) { .candidates { grid-template-columns: repeat(3, 1fr); } }
+
+.candidate { background: var(--surface); padding: 1.1rem; }
+.candidate dt {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.55rem;
+}
+.candidate dd { margin: 0; font-size: 0.92rem; line-height: 1.55; color: var(--ink-soft); }
+
+/* --- correlated bits -------------------------------------------------- */
+
+.bits {
+  display: grid;
+  grid-template-columns: auto repeat(2, minmax(0, 4.4rem));
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  width: max-content;
+  max-width: 100%;
+  margin: 1.5rem 0 0.7rem;
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+.bits span {
+  background: var(--surface);
+  padding: 0.55rem 0.7rem;
+  text-align: center;
+  color: var(--ink-faint);
+}
+.bits .hdr { color: var(--ink-faint); letter-spacing: 0.08em; }
+.bits .on { background: var(--accent-wash); color: var(--accent); font-weight: 600; }
+
+/* --- fixed point tests ------------------------------------------------ */
+
+.tests {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  margin: 1.8rem 0;
+}
+.test { margin: 0; }
+.test svg { display: block; width: 100%; height: auto; background: var(--surface); border: 1px solid var(--rule); }
+.test figcaption {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.68rem;
+  line-height: 1.5;
+  color: var(--ink-faint);
+  margin-top: 0.55rem;
+}
+.test figcaption b { display: block; color: var(--accent); font-weight: 600; }
+
+/* --- iterator --------------------------------------------------------- */
+
+.iterator {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  padding: 1.1rem;
+  margin: 1.7rem 0;
+}
+.iterator-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.6rem 0.8rem;
+  margin-bottom: 0.9rem;
+}
+.iterator label {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.iterator input {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.85rem;
+  width: 7rem;
+  padding: 0.35rem 0.5rem;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+}
+.iterator-out {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.76rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.75;
+  color: var(--ink-soft);
+  margin: 0;
+  display: grid;
+  gap: 0 1.2rem;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+}
+.iterator-out span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.iterator-out .settled { color: var(--accent); font-weight: 600; }
+.iterator-note {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.68rem;
+  line-height: 1.55;
+  color: var(--ink-faint);
+  margin: 0.9rem 0 0;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--rule-soft);
+}
+
+/* --- axioms ----------------------------------------------------------- */
+
+.axiom {
+  border-top: 1px solid var(--rule);
+  padding-top: 1.4rem;
+  margin-top: 1.8rem;
+}
+.axiom-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 0.7rem;
+  flex-wrap: wrap;
+}
+.axiom-tag {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--paper);
+  background: var(--accent);
+  padding: 0.12rem 0.45rem;
+  border-radius: 2px;
+}
+.axiom-name {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.axiom-plain { font-size: var(--step-1); font-weight: 300; line-height: 1.45; margin-bottom: 0.9rem; }
+.axiom-book {
+  font-size: 0.93rem;
+  color: var(--ink-soft);
+  border-left: 1px solid var(--rule);
+  padding-left: 1rem;
+  margin-bottom: 1.1rem;
+}
+
+.denies {
+  margin: 0;
+  padding: 0.9rem 1.1rem;
+  background: var(--flag-wash);
+  border-left: 2px solid var(--flag-rule);
+}
+.denies dt {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--flag);
+  margin-bottom: 0.45rem;
+}
+.denies dd {
+  margin: 0;
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* --- ladder ----------------------------------------------------------- */
+
+.ladder { list-style: none; margin: 2rem 0 0; padding: 0; }
+
+.rung {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr);
+  column-gap: 1.1rem;
+  padding-block: 1.35rem;
+  border-top: 1px solid var(--rule);
+}
+.rung:last-child { border-bottom: 1px solid var(--rule); }
+
+.rung-n {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent-2);
+  padding-top: 0.2rem;
+}
+.rung-n small {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+  margin-top: 0.15rem;
+}
+
+.rung-title {
+  font-size: var(--step-1);
+  font-weight: 400;
+  line-height: 1.28;
+  margin: 0 0 0.5rem;
+  text-wrap: balance;
+}
+
+.rung-body { margin: 0 0 0.75rem; font-size: 0.95rem; line-height: 1.6; color: var(--ink-soft); }
+.rung-body:last-child { margin-bottom: 0; }
+
+.rung-figure {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  background: var(--accent-wash);
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+  margin-bottom: 0.7rem;
+}
+
+.rung-status {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.69rem;
+  line-height: 1.6;
+  color: var(--flag);
+  border-left: 2px solid var(--flag-rule);
+  padding-left: 0.8rem;
+  margin: 0;
+}
+.rung-status b {
+  display: block;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  font-size: 0.62rem;
+  color: var(--flag);
+  margin-bottom: 0.2rem;
+}
+
+.rung.terminus { background: var(--surface-2); padding-inline: 1rem; margin-inline: -1rem; }
+.rung.terminus .rung-title { font-weight: 300; font-size: var(--step-2); letter-spacing: -0.01em; }
+
+/* --- legend ----------------------------------------------------------- */
+
+.legend {
+  margin: 1.8rem 0 0;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+}
+.legend-row {
+  display: grid;
+  gap: 0.15rem 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--rule-soft);
+}
+@media (min-width: 34rem) { .legend-row { grid-template-columns: 13rem minmax(0, 1fr); } }
+.legend-row:last-child { border-bottom: 0; }
+.legend-row dt {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+.legend-row dd { margin: 0; font-size: 0.88rem; line-height: 1.5; color: var(--ink-soft); }
+
+/* --- sources ---------------------------------------------------------- */
+
+.sources {
+  list-style: none;
+  margin: 1.4rem 0 0;
+  padding: 0;
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.72rem;
+  line-height: 1.75;
+  color: var(--ink-faint);
+}
+.sources li { padding-block: 0.3rem; border-top: 1px solid var(--rule-soft); }
+.sources b { color: var(--ink-soft); font-weight: 500; }
+
+.colophon {
+  grid-column: 1 / -1;
+  padding-block: 2.5rem 3.5rem;
+  border-top: 1px solid var(--rule);
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.7rem;
+  line-height: 1.7;
+  color: var(--ink-faint);
+}
+.colophon p { margin: 0 0 0.6rem; max-width: 40rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  html { scroll-behavior: auto; }
+}
+html { scroll-behavior: smooth; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ============================== HERO ============================== -->
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Observer Patch Holography</p>
+      <h1>From nothing to the <em>last</em> line</h1>
+      <p class="standfirst">The chain runs one way only. A universe that has no outside, three requirements on bookkeeping, and then physics, arriving in an order that puts the equation everyone starts from at the very end.</p>
+      <p class="byline">
+        A reading of essay B, <i>Why Does Anything Exist, and Why Is It Like This?</i>, sections 3, 7 and 8; the prologue and chapter 2 of <i>Reverse Engineering Reality</i>; and <code>docs/AXIOM_REFERENCE.md</code>.<br>
+        Every hedge on this page is the corpus's own.
+      </p>
+    </div>
+
+    <figure class="carrier">
+      <div class="carrier-frame">
+        <canvas id="carrier" width="640" height="640" role="img" aria-label="Wireframe of an icosahedral boundary complex with its twelve vertices marked as ports."></canvas>
+        <div class="carrier-counts">
+          <span><b>12</b> ports</span>
+          <span><b>30</b> seams</span>
+          <span><b>20</b> faces</span>
+        </div>
+      </div>
+      <figcaption>The A1 carrier boundary. A1 fixes incidence only: five seams at every port, each port's neighbors a five-cycle, every seam in two oppositely oriented faces. "Regular" names the combinatorial reference complex and adds no Euclidean placement. The solid drawn here is a reading aid, not a location.</figcaption>
+    </figure>
+  </header>
+
+  <!-- ============================== RAIL ============================== -->
+  <nav class="rail" aria-label="Sections">
+    <p class="rail-title">The chain</p>
+    <ul class="rail-list">
+      <li><a href="#nothing">00 &nbsp;What "nothing" means</a></li>
+      <li><a href="#determination">01 &nbsp;Mutual determination</a></li>
+      <li><a href="#closure">02 &nbsp;The closure condition</a></li>
+      <li><a href="#hypothesis">03 &nbsp;The hypothesis</a></li>
+      <li><a href="#axioms">04 &nbsp;Three axioms</a></li>
+      <li><a href="#ladder">05 &nbsp;The ladder</a></li>
+      <li><a href="#reading">06 &nbsp;Reading the labels</a></li>
+      <li><a href="#sources">07 &nbsp;Sources</a></li>
+    </ul>
+  </nav>
+
+  <main class="flow">
+
+    <!-- ========================== 00 NOTHING ========================== -->
+    <section class="station" id="nothing">
+      <div class="station-head">
+        <span class="station-index">00</span>
+        <h2>What "nothing" could mean</h2>
+      </div>
+
+      <p class="lede">Take "everything" seriously and the familiar picture goes first. An explanation located outside the physical universe can explain the physical universe. It cannot be outside absolutely everything.</p>
+
+      <p>Chapter 2 makes the same removal from the other side. "Something outside made it" and "something before it" are sentences assembled out of two components a reverse engineer has not found on the board. Outside is a spatial word. Before is a temporal word. Chapter 1 took both off the inventory, so there is no distance for a cause to sit at and no earlier for it to have acted in. The infinite regress was never the real complaint.</p>
+
+      <p>Which leaves the starting point. Essay B section 8 refuses to let one word cover three different conditions.</p>
+
+      <dl class="candidates">
+        <div class="candidate">
+          <dt>Absolute absence</dt>
+          <dd>Supplies no states, law, machine or probability measure. A blank tape exists; the emptiness it represents does not turn into an object by being represented.</dd>
+        </div>
+        <div class="candidate">
+          <dt>Perfect symmetry</dt>
+          <dd>Invariance under specified transformations. It need not mean absence of relations. Two unlabelled positions can stand in a definite relation without either being privileged.</dd>
+        </div>
+        <div class="candidate">
+          <dt>Uniform randomness</dt>
+          <dd>An outcome left unspecified, given a stated set of alternatives. For N equally likely alternatives, H = log&#8322;N, its maximum. A simple rule can specify that distribution without specifying its sampled outcome.</dd>
+        </div>
+      </dl>
+
+      <p>Then the useful surprise. Give two bits the joint distribution below.</p>
+
+      <div class="bits" role="img" aria-label="Joint distribution of two bits: probability one half on zero-zero, one half on one-one, zero elsewhere.">
+        <span class="hdr"></span><span class="hdr">b = 0</span><span class="hdr">b = 1</span>
+        <span class="hdr">a = 0</span><span class="on">1/2</span><span>0</span>
+        <span class="hdr">a = 1</span><span>0</span><span class="on">1/2</span>
+      </div>
+
+      <p>Neither bit has a preferred value. Exchanging zero and one everywhere leaves the distribution alone. Yet their relation is definite: they agree, and an observer holding either bit can predict the other. The symmetry survives while the relation carries information. Compare independent fair bits, where the individual distributions are identical and one tells you nothing about the other.</p>
+
+      <p class="pull">A defensible sense of "a nothing": no preferred absolute label, while comparisons support definite relative content.</p>
+
+      <div class="flag">
+        <span class="flag-label">What this does not do</span>
+        <p>The shared bit is a minimal correlation. It is no observer. Records, their causal use, and the conditions for stable public agreement all still have to be supplied.</p>
+        <p>Nor does any of it derive existence from absolute absence. The proposed origin is logical rather than an earlier event. It asks whether the demand for something <i>in addition to</i> the complete relational structure is itself misplaced.</p>
+      </div>
+    </section>
+
+    <!-- ====================== 01 MUTUAL DETERMINATION ================= -->
+    <section class="station" id="determination">
+      <div class="station-head">
+        <span class="station-index">01</span>
+        <h2>Determination without a first term</h2>
+      </div>
+
+      <p class="lede">Section 3 spends two numbers to make the point that a chain of causes is not the only shape an explanation can have.</p>
+
+      <div class="formula">
+        x = (y + 2) / 2 &nbsp;&nbsp;&nbsp; y = (x + 2) / 2
+        <small>Subtracting gives x &minus; y = &minus;(x &minus; y)/2, so x = y. Substituting gives x = y = 2.</small>
+      </div>
+
+      <p>Neither line determines its own unknown in isolation. Together they fix both. There is no first value from which the other had to be manufactured. A calculator may approach it through a sequence of guesses, and someone may discover it on a Tuesday. Neither belongs to the reason the answer is two.</p>
+
+      <p>The explanatory force lies in what the pair excludes. An empty circle of justification would say that x is two because y is two and y is two because x is two, which permits every pair (a, a). These two equations reduce a space of possibilities to one member.</p>
+
+      <p>Chapter 2 runs the same move on a calculator, at the smallest scale it can occur at. Pick any positive number. Divide one by it, add one, keep the answer, repeat.</p>
+
+      <div class="iterator">
+        <div class="iterator-row">
+          <label for="seed">Start from</label>
+          <input id="seed" name="seed" type="number" step="any" value="7" inputmode="decimal" autocomplete="off">
+          <span class="rung-figure" style="margin:0">x &larr; 1 + 1/x</span>
+        </div>
+        <p class="iterator-out" id="iterOut"></p>
+        <p class="iterator-note" id="iterNote"></p>
+      </div>
+
+      <p>Nothing was measured. No experiment was performed and no data existed at any point in the procedure. A single demand, that the operation return what it is given, reached into the continuum of real numbers and picked out exactly one. The quadratic has a second root, &minus;0.618034, which is a fixed point exactly as much as the other one is. Start anywhere near it and the numbers flee. Being a point that a process leaves alone is one property. Being a point a process moves toward is a different property.</p>
+
+      <div class="flag">
+        <span class="flag-label">The debt this leaves</span>
+        <p>Somebody selected those equations. A fixed point earns an explanation relative to a map; it does not explain the map merely by having one. Moving an unexplained choice from a constant into an equation leaves the debt unpaid. A useful account must identify the inputs it assumes, show the restrictions they impose, and avoid hiding the desired answer in those inputs.</p>
+      </div>
+    </section>
+
+    <!-- ========================== 02 CLOSURE ========================== -->
+    <section class="station" id="closure">
+      <div class="station-head">
+        <span class="station-index">02</span>
+        <h2>The closure condition</h2>
+      </div>
+
+      <p class="lede">Section 7 writes the condition the whole framework is shaped by. Let &#120108; be a candidate inhabited structure, D(&#120108;) an account of its architecture recoverable through records inside it, and R an admissible realization of that account.</p>
+
+      <div class="formula">
+        R( D(&#120108;) ) &nbsp;&#8773;&nbsp; &#120108;
+        <small>&#8773; means agreement in the relevant observable and interventional structure.</small>
+      </div>
+
+      <p>The equation does not picture an external computer making a smaller universe inside a larger one. Realization means that the specified state dependencies actually obtain, including their responses to admitted interventions. It identifies the construction-side and inhabited-side readings as readings of one system.</p>
+
+      <p>A recorded film can reproduce an experiment's outcomes along one history. It cannot reproduce the experiment if changing the apparatus leaves the film unchanged. Suppose a bit is meant to toggle. After zero, both a genuine toggle and a recording display one. Set the retained bit to one instead: the toggle produces zero, and a playback that ignores the intervention displays its predetermined one.</p>
+
+      <h3>Self-reference earns nothing on its own</h3>
+
+      <p>Writing x = T(x) is the beginning of a question, not the end of one. The same notation admits no solution, every solution, or exactly one, and the explanatory work belongs to the specified map.</p>
+
+      <div class="tests">
+        <figure class="test">
+          <svg viewBox="0 0 132 132" aria-hidden="true">
+            <line x1="14" y1="118" x2="118" y2="14" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" opacity="0.32"></line>
+            <line x1="14" y1="92" x2="92" y2="14" stroke="var(--accent)" stroke-width="2" fill="none"></line>
+            <line x1="14" y1="14" x2="14" y2="118" stroke="currentColor" stroke-width="1" opacity="0.25"></line>
+            <line x1="14" y1="118" x2="118" y2="118" stroke="currentColor" stroke-width="1" opacity="0.25"></line>
+          </svg>
+          <figcaption><b>T(x) = x + 1</b>no fixed point</figcaption>
+        </figure>
+        <figure class="test">
+          <svg viewBox="0 0 132 132" aria-hidden="true">
+            <line x1="14" y1="118" x2="118" y2="14" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" opacity="0.32"></line>
+            <line x1="14" y1="118" x2="118" y2="14" stroke="var(--accent)" stroke-width="2" fill="none"></line>
+            <line x1="14" y1="14" x2="14" y2="118" stroke="currentColor" stroke-width="1" opacity="0.25"></line>
+            <line x1="14" y1="118" x2="118" y2="118" stroke="currentColor" stroke-width="1" opacity="0.25"></line>
+          </svg>
+          <figcaption><b>T(x) = x</b>every point fixed</figcaption>
+        </figure>
+        <figure class="test">
+          <svg viewBox="0 0 132 132" aria-hidden="true">
+            <line x1="14" y1="118" x2="118" y2="14" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" opacity="0.32"></line>
+            <line x1="14" y1="92" x2="118" y2="40" stroke="var(--accent)" stroke-width="2" fill="none"></line>
+            <circle cx="66" cy="66" r="4" fill="var(--accent)"></circle>
+            <line x1="14" y1="14" x2="14" y2="118" stroke="currentColor" stroke-width="1" opacity="0.25"></line>
+            <line x1="14" y1="118" x2="118" y2="118" stroke="currentColor" stroke-width="1" opacity="0.25"></line>
+          </svg>
+          <figcaption><b>T(x) = (x+2)/2</b>exactly one</figcaption>
+        </figure>
+      </div>
+
+      <p>Unrestricted self-representation fails in ordinary sets with nontrivial outputs, by Cantor's argument. Lawvere's theorem covers certain diagonal constructions only under a representation hypothesis, and useful restricted settings have to justify their admissible maps and closure properties. It would be a mistake to infer a universe from the mere presence of self-reading.</p>
+
+      <p>What the condition supplies is the form of a proposed explanation. The candidate has to return its own world when its internally recoverable description is realized. Its observations cannot demand one architecture while its realization supplies another. The subsumption has to be inhabited, carried out through records and agents inside the structure rather than stated about it from outside.</p>
+
+      <div class="flag">
+        <span class="flag-label">Not a fourth axiom</span>
+        <p>The axiom reference is explicit: closure is a global principle beside the three axioms and never enters an axiom count. For every quantity with independently constructed outer and inner readings it imposes three things, and equality by itself establishes none of them. <b>Identity</b>: a typed bridge must first prove that both readings denote the same invariant. <b>Construction</b>: the bridge and return map must be produced independently of the value they are later compared with. <b>Determinacy</b>: existence, uniqueness and stability must be proved on the declared physical domain.</p>
+      </div>
+    </section>
+
+    <!-- ========================= 03 HYPOTHESIS ======================== -->
+    <section class="station" id="hypothesis">
+      <div class="station-head">
+        <span class="station-index">03</span>
+        <h2>Where the mathematics stops and the ontology starts</h2>
+      </div>
+
+      <p class="lede">Section 9 draws the line the rest of the corpus keeps drawing, and it is the most important line on this page.</p>
+
+      <p>It starts with a theorem small enough to state in a sentence. Take a description with states x in X and update rules T&#8336;, and a proposed realization with actual states s in S, operations F&#8336;, and a fixed readout p from S to X. Require p(F&#8336;(s)) = T&#8336;(p(s)) for every admitted state and operation.</p>
+
+      <div class="formula">
+        p( F<sub>a&#8345;</sub> &#8943; F<sub>a&#8321;</sub>(s) ) = T<sub>a&#8345;</sub> &#8943; T<sub>a&#8321;</sub>( p(s) )
+        <small>Finite realization lemma. The proof is induction: the one-step condition moves p past the last update, and applying it repeatedly moves p past the whole sequence.</small>
+      </div>
+
+      <p>A described difference between two intervention outcomes must therefore also appear in the realized readouts. The implementation carries the tested causal organization, including what would happen under the admitted alternatives. That is what the lemma proves, and it is all the lemma proves.</p>
+
+      <p>The ontological hypothesis is a separate statement: <b>where a kind of thing is constituted by a causal organization, a realization of that organization is an instance of that kind</b>. Applied to the totality, where there is no external machine, it becomes <b>intrinsic realization</b>: the complete structure's lawful dependencies constitute its operation, and an inhabited, causally complete closure is actual without an external act of actualization.</p>
+
+      <div class="flag">
+        <span class="flag-label">Hypothesis, not theorem</span>
+        <p>The essay states it in its own words: "The finite lemma does not prove this, since it assumes an actual implementation." The lemma checks fidelity. The constitutive hypothesis says which properties that fidelity is enough to instantiate, and that is an extension of the explanatory role of causal organization, adopted for what it explains.</p>
+        <p>A philosopher can instead maintain that instantiation is an additional primitive fact. The essay concedes the point directly: the disagreement is ontological, and a fixed-point theorem does not settle it.</p>
+        <p>Nor does closure select one world. "If several closures qualify, the hypothesis admits several worlds; predicting typical observations would require a justified measure. Self-consistency alone has not selected our world."</p>
+      </div>
+
+      <p class="quiet">The qualification runs the other way too. A simulated flood can have actual computational consequences without putting water on the host computer's floor. A causal graph needs further geometric conditions to constitute a spacetime. Consciousness requires the experiencing organization specified by the phenomenal hypothesis, including its records, self-reading and ownership. A convincing display establishes none of those.</p>
+    </section>
+
+    <!-- ========================== 04 AXIOMS =========================== -->
+    <section class="station" id="axioms">
+      <div class="station-head">
+        <span class="station-index">04</span>
+        <h2>Three axioms, and what each one refuses to give you</h2>
+      </div>
+
+      <p class="lede">Chapter 2 sets the exchange rate the rest of the book runs on. Require nothing and you get nothing, because a form is exactly a set of things that are not allowed. Contradict yourself and you get everything, which distinguishes nothing. Between those two failures is a window, and it is narrower than anybody expects.</p>
+
+      <p>So the constraints have to be counted, they have to be few, and every one of them has to be visible. There are three. Each one below carries its plain statement, the book's version of it, and the corpus's own list of what it does not imply, which is the part most accounts leave out.</p>
+
+      <div class="axiom">
+        <div class="axiom-head">
+          <span class="axiom-tag">A1</span>
+          <span class="axiom-name">Observer screen architecture</span>
+        </div>
+        <p class="axiom-plain">There exists an observer patch net on an oriented spherical screen. At every finite resolution, each local carrier has twelve primitive boundary ports, joined through typed seams and coherent triple overlaps, exposing local state, readback, records, repair moves and checkpoints.</p>
+        <p class="axiom-book">The book's version: whatever the world is made of, each piece of it sees only a part and keeps a record of what it saw.</p>
+        <dl class="denies">
+          <dt>A1 does not imply</dt>
+          <dd>Semantic agreement. Repair termination. Confluence. Global state extension. Any state selection. Equal state weights &#961;(e&#8346;) = 1/12. The integer load fiber and quadratic readback. The inverse-port involution and six axes. A&#8325; as axiom content. Any particular compact Lie type or global group. Endogenous carrier transport. Collar recovery. Generalized-entropy structure. Any laboratory identification.</dd>
+        </dl>
+      </div>
+
+      <div class="axiom">
+        <div class="axiom-head">
+          <span class="axiom-tag">A2</span>
+          <span class="axiom-name">Observer agreement</span>
+        </div>
+        <p class="axiom-plain">Observers agree on the meaning of the data they jointly interpret. Every proper recharting of a complete carrier can be performed by their own reversible overlap response, rather than by an external relabeling.</p>
+        <p class="axiom-book">The book's version: where two pieces overlap, their records have to agree, and any relabeling of a piece has to be a move the system can carry out on itself, with no hand reaching in.</p>
+        <dl class="denies">
+          <dt>A2 does not imply</dt>
+          <dd>Global extendability. Termination. Confluence. Unique public normal forms. Byzantine safety. Record durability. Exact closure of an exponential family. It does not remove scalar projective phases or silent centralizer multiplicities, and it selects no global compact group and no laboratory interpretation. Countermodels are kept as permanent controls: federations satisfying A1 and A2 exist in which repair fails to terminate and in which no single global state extends the compatible local family.</dd>
+        </dl>
+      </div>
+
+      <div class="axiom">
+        <div class="axiom-head">
+          <span class="axiom-tag">A3</span>
+          <span class="axiom-name">Conditional maximum randomness</span>
+        </div>
+        <p class="axiom-plain">Everything that observer agreement leaves unconstrained is maximally random. The realized state is the information projection: the member of the feasible set minimizing weighted relative entropy against the declared reference family.</p>
+        <p class="axiom-book">The book's version: beyond what the first two force, nothing is assumed. Whatever is not pinned down stays as unconstrained as it is possible to be.</p>
+        <dl class="denies">
+          <dt>A3 does not imply</dt>
+          <dd>Independent noise, equal probabilities in every coordinate system, or global thermal equilibrium. Optimizer pushforward across refinement (the exact nonclosure defect 5/66 is exhibited outside the sufficiency family). State alignment. Collar recovery. Markovity. Mixing. Any selection among unrelated model spaces. A3 selects a state inside one A1-fixed feasible space, which is what stops maximum randomness from becoming a renamed economy rule.</dd>
+        </dl>
+      </div>
+
+      <p style="margin-top:2rem">A1 supplies the architecture. A2 turns compatible interpretation into public meaning, which together with A1 fixes the feasible family of public states. A3 selects the least informative state in that family. Equal state weights, &#961;(e&#8346;) = 1/12, are not A1 content: they follow from A1 and A3 together, and the tilted-reference, non-transitive, non-unique and incomplete-cover countermodels mark each clause of that proof as necessary.</p>
+    </section>
+
+    <!-- ========================== 05 LADDER =========================== -->
+    <section class="station" id="ladder">
+      <div class="station-head">
+        <span class="station-index">05</span>
+        <h2>The reconstruction ladder</h2>
+      </div>
+
+      <p class="lede">Fourteen rungs, in the order the book climbs them. Each one says what arrives, what it was counted from, and what the corpus says is still not constructed. The line every physicist writes down first is rung fourteen.</p>
+
+      <ol class="ladder">
+
+        <li class="rung">
+          <div class="rung-n">01<small>ch 14</small></div>
+          <div>
+            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Twelve ports</h3>
+            <span class="rung-figure">12 ports &middot; 30 seams &middot; 20 faces</span>
+            <p class="rung-body">Four conditions on how comparisons meet, every one of them checkable by something sitting inside the boundary with no view of it, leave exactly one count standing. Twelve is what happens when twenty triangles close up with five meeting at each corner. The count used no direction anywhere in it, which matters because the three directions get built out of twelve readings like these.</p>
+            <p class="rung-status"><b>Status</b>A1 states the twelve-port packet as axiom content. The incidence consequences (inverse port, six axes, A&#8325;, the Galois-conjugate frame pair) are theorems about A1 carriers, proved separately, and the specific inverse-port law is an exact result inside a named realization rather than abstract A1 content.</p>
+          </div>
+        </li>
+
+        <li class="rung">
+          <div class="rung-n">02<small>ch 15</small></div>
+          <div>
+            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Three dimensions</h3>
+            <span class="rung-figure">rank-three Gram quotient</span>
+            <p class="rung-body">The declared twelve-port repair mean selects an intrinsic rank-three Gram quotient as its normalized infinite-response limit. The antipodal-odd integer load quotient is Z&#8310;, the thirty-seam boundary image is the even-sum D&#8326; sublattice, and both embed densely into the same abstract three-dimensional Euclidean completion, on which the sixty proper carrier maps act faithfully and isometrically. Record counts in a region then grow as the inverse cube of the spacing, which is the three directions showing up in a count. No grid of little cubes was put in anywhere.</p>
+            <p class="rung-status"><b>Exact intrinsic metric completion</b>Physical position, scale, refinement and gluing are not constructed.</p>
+          </div>
+        </li>
+
+        <li class="rung">
+          <div class="rung-n">03<small>ch 16</small></div>
+          <div>
+            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Time, and only one way</h3>
+            <p class="rung-body">The past is the set of commits that have been made, together with the certified reads that tie them to one another. Its content is fixed because rewriting it would need information the writes destroyed. The future is the disagreements that have no commit yet: their content does not exist in any register in the world, because the repairs that would fix it have not been made. A defect that survives every repair the world can perform is a thing with a history, and the history is the chain of writes that carried it.</p>
+            <p class="rung-status"><b>Exact formal boundary</b>Universe closure, repair execution order, observer record order, worldline realization, clock readout, proper time and optional global time are typed as distinct layers, and a canonical witness matrix rejects all 56 ordered transitive coercions between them. Physical time realization is not constructed.</p>
+          </div>
+        </li>
+
+        <li class="rung">
+          <div class="rung-n">04<small>ch 17</small></div>
+          <div>
+            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">A speed limit</h3>
+            <span class="rung-figure">seams crossed / repairs committed</span>
+            <p class="rung-body">One seam per event, no faster, so a commit can only depend on commits within a certain number of seams of it. The edge of the web advances at a fixed number of seams per event, and turning that count into meters and seconds makes it a speed. Every observer computes the same ratio from its own books with nobody else's numbers in hand, because every observer's sky is a sphere, the maps between skies keep angles, and all of those maps move points on one and the same cone. The boundary is a property of the sphere rather than a property of light.</p>
+            <p class="rung-status"><b>Note the direction of the argument</b>Two events either have an order everybody can read or have none at all. The 1983 metrological convention fixes c at 299,792,458 m/s exactly, so the number is a unit conversion and not a measurement.</p>
+          </div>
+        </li>
+
+        <li class="rung">
+          <div class="rung-n">05<small>ch 18</small></div>
+          <div>
+            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Energy</h3>
+            <p class="rung-body">Positivity, additivity and conservation went into classical physics as three separate things the world was observed to do. They come out here as three readings of one move: a sum of squares has a floor, separated regions share no seam, and a single-sided entry cannot be written. Energy is what a region hands over when it is asked for it.</p>
+            <p class="rung-status"><b>What the same move costs</b>Put a second question to the region at the same moment, about where the beam is, and the two have no joint answer. Which pairs of questions have a joint answer is a fact about the questions, and no instrument gets a vote.</p>
+          </div>
+        </li>
+
+        <li class="rung">
+          <div class="rung-n">06<small>ch 20</small></div>
+          <div>
+            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Tsirelson, and why twelve ports fall short of it</h3>
+            <span class="rung-figure">2.3416407865 of a ceiling at 2&#8730;2 = 2.8284271</span>
+            <p class="rung-body">The ceiling comes out of two objects and nothing else: an algebra of questions carrying its brackets, and a state assigning odds to them. A universe with twelve ports has no thirteenth direction to offer, so four measurement settings drawn in order from twelve is 20,736 choices, few enough to take all of them. The best score is reached by 960 of the 20,736, and all 960 run the same way: three pairings at 63.43 degrees where the correlation is 1/&#8730;5, one on a shared axis where it is 1, giving 1 + (3&#8730;5)/5.</p>
+            <p class="rung-body">It clears 2, so twelve observers on a closed surface do the thing no sealed answer sheet reproduces. It stops short of the ceiling because reaching the ceiling wants Bob's directions an eighth of a turn from Alice's, and an icosahedron's twelve corners offer exactly four angles: 0, 63.43, 116.57 and 180 degrees. An eighth of a turn is not among them.</p>
+            <p class="rung-status"><b>Exact finite enumeration</b>The search is complete over the declared setting menu. Twelve fixed directions cheat, take two fifths of the distance from 2 to 2.8284, and stop.</p>
+          </div>
+        </li>
+
+        <li class="rung">
+          <div class="rung-n">07<small>ch 22</small></div>
+          <div>
+            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Landauer heat</h3>
+            <p class="rung-body">One number gets read off five instruments by five sets of people who did not know they were measuring the same thing: an engine reads it as heat over temperature, a gas as Boltzmann's count of arrangements, a memory as Shannon's count of questions and Landauer's price per question, a horizon as an area in square meters, and a public record as what a settled disagreement threw away. Every record ever written has been paid for in heat, at the temperature of whatever wrote it.</p>
+            <p class="rung-status"><b>Where the bill lands</b>The heat leaves through the edge of the region holding the record. That puts the charge on the edge rather than on the volume inside it, which is the whole of the next rung.</p>
+          </div>
+        </li>
+
+        <li class="rung">
+          <div class="rung-n">08<small>ch 23</small></div>
+          <div>
+            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">The area law</h3>
+            <span class="rung-figure">~10&#8310;&#8311; severed seams per 10 cm square</span>
+            <p class="rung-body">Entropy divides the way the seams divide. The number attached to a piece of boundary is a count of that piece's own severed seams, so halving the surface halves the number and equal areas carry equal counts, on any horizon, whatever sits behind them, because the area is the count. A patch reads the seams of its own collar one at a time; a ruler laid along that collar reads the same seams four Planck squares at a time.</p>
+            <p class="rung-status"><b>What the balance is between</b>A count of what somebody would have to be told, against a shape. The surface is made of no material at all, and the only property it has to offer is a size.</p>
+          </div>
+        </li>
+
+        <li class="rung">
+          <div class="rung-n">09<small>ch 24</small></div>
+          <div>
+            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Gravity as geometry</h3>
+            <p class="rung-body">Every ingredient is something the observers count. The light cones and the horizons made of them are the order. A volume is a number of records. An area is a number of crossing reads, which are the previous rung's severed seams written into the order. At the settled state the entropy of every small ball, contents plus boundary, sits at its maximum, and the counts obey Einstein's equation. Curvature is what a settled network of observers looks like from a distance.</p>
+            <p class="rung-status"><b>Eleven-rung premise ladder, and only the first rung is axiom-forced</b>Rung 1 (A3 existence, uniqueness, support, faithfulness) is <code>axiom_forced</code>. Rung 3 (edge-center decomposition and state alignment) is <code>independence_limited</code>. Rungs 2, 4, 5, 6, 7, 8 and 9 are <code>conditional_open_interface</code>. Rungs 10 and 11, vacuum and physical tower construction, and metrological and source-clock scale attachment, are <code>physical_identification</code>. No rung is promoted from A2 naturality or A3 optimization alone.</p>
+          </div>
+        </li>
+
+        <li class="rung">
+          <div class="rung-n">10<small>ch 25</small></div>
+          <div>
+            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Exactly these forces</h3>
+            <span class="rung-figure">su(3) + su(2) + u(1), as 8 + 3 + 1</span>
+            <p class="rung-body">Complete compact port response from A1 and endogenous overlap transport from A2 force the abstract Lie type on the twelve-port carrier. The inputs were twelve ports and thirty seams, sixty rotations, the requirement that every relabeling be an inside job, the splitting of twelve readings into blocks of 1, 3, 3' and 5, and Killing and Cartan's classification of the sizes a simple group is allowed to have, finished before the electron was discovered. The count consulted no mass, no coupling strength, no decay rate and no accelerator run.</p>
+            <p class="rung-status"><b>Axiom-forced abstract Lie type; conditional matrix witness</b>The released charged-double-triplet matrices are an exact declared witness. Ordered source tomography and same-current holonomy are not constructed, and the global group form (SU(3) &times; SU(2) &times; U(1))/Z&#8326; is an exact conditional kernel result, not a source selection.</p>
+          </div>
+        </li>
+
+        <li class="rung">
+          <div class="rung-n">11<small>ch 26</small></div>
+          <div>
+            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Three generations</h3>
+            <span class="rung-figure">carrier module 1 + 3 + 3' + 5</span>
+            <p class="rung-body">Each of the twenty faces has its own threefold rotation cycling its three corners, and something has to carry that turn. The number of copies of the roster is the width of whatever carries it. The twelve directions break into uncuttable pieces of sizes 1, 3, 3' and 5. The piece of size one takes the same value under every rotation and can carry no phase at all; there is no piece of size four, so a fourth copy has nowhere to ride, and no piece of size two either. Priced, the three eligible pieces cost 5 &minus; &#8730;5, 6 and 5 + &#8730;5, that is 2.7639, 6 and 7.2361. The cheapest is a piece of size three.</p>
+            <p class="rung-status"><b>Checkable from outside</b>The four LEP detectors give 2.9840 &plusmn; 0.0082 light neutrino species, three to within a percent, with no room for a fourth light one. The one-generation hypercharge multiset is selected by an exhaustive scan of all 1024 subsets of the declared exterior-response algebra; physical matter attachment is a separate step.</p>
+          </div>
+        </li>
+
+        <li class="rung">
+          <div class="rung-n">12<small>ch 28</small></div>
+          <div>
+            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">1/137</h3>
+            <span class="rung-figure">closure 137.035660 &nbsp;vs&nbsp; laboratory 137.035999</span>
+            <p class="rung-body">The constants are wired together. The screen grain P enters the coupling the forces share, running that down the range returns alpha, and alpha appears back inside P. The grain also enters a budget, the budget enters the capacity N, and the capacity fixes the dimensionless cosmological term through 3&#960;/N. A loop of that shape is chapter 2's equation with the world inside it: the unknown stands on both sides, and the loop has one solution rather than a dial. The capacity lands four parts in a thousand from the weighted expansion coordinate.</p>
+            <p class="rung-status"><b>Interval-certified fixed point; laboratory attachment open</b>The screen-grain proposal P = &#966; + &#8730;&#960;/A&#7451;(P) has an interval-certified fixed point, and its laboratory attachment awaits the same-scheme hadronic transport. The quark cloud holds the difference between 137.035660 and 137.035999. The direct capacity proposal N = log M&#8320;(&#120108;&#8345;) is not evaluable on the incomplete source antecedent, and the finite source selects neither global capacity action.</p>
+          </div>
+        </li>
+
+        <li class="rung">
+          <div class="rung-n">13<small>ch 29</small></div>
+          <div>
+            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Masses, and the place the geometry stops</h3>
+            <span class="rung-figure">&#964; in [1776.968991, 1776.969063] MeV &nbsp;&middot;&nbsp; 0.4336 &#963;</span>
+            <p class="rung-body">The balance at the corners of one oriented face, equal weight for the two ways they can respond, is Koide's two thirds. Handed the electron and the muon, the wiring pins the tau inside 72 electron-volts and prints the value at which the balance dies. The same wiring fixes the electric charges to every decimal anyone has measured, the number of colors at three and the number of families at three.</p>
+            <p class="rung-body">Then it stops. Quark mixing wants an angle of 13.0029 degrees. The smallest angle the solid has to offer is 20.9052, sixty percent larger, and relabeling which axis is which does nothing because the floor is a property of the solid rather than of the labeling. All 465 angles were written out in full and read down to the last one. The angle is not there.</p>
+            <p class="rung-status"><b>Conditional postdiction under declared premises</b>The tau interval holds under the balanced-circulant and mass-ordering premises, with a frozen rejection rule and a declared premise ancestry. The balance premise is Koide's published relation. An empty search is what makes this a result: had 13.0029 turned up anywhere on that list, the charges and the family count would have been worth less, because a solid that yields whatever angle is asked of it has yielded nothing.</p>
+          </div>
+        </li>
+
+        <li class="rung terminus">
+          <div class="rung-n">14<small>ch 30</small></div>
+          <div>
+            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">The Lagrangian, arriving last</h3>
+            <p class="rung-body">The line that fits on a coffee mug is where every other account of the world begins. Here it is rung fourteen. Nobody derives it in the ordinary telling: it is written down and then adjusted until it matches experiment, its symmetry group selected because it matched what the detectors reported, its three families put in because experiments found three, and somewhere between nineteen and twenty-six of its numbers measured in laboratories and typed in.</p>
+            <p class="rung-body">By this rung the charges, the color count, the family count, the gauge Lie type and the lepton balance have arrived from counting on a wiring diagram. The settled entries and the untouched ones end up on the same line, side by side, with nothing marking which is which.</p>
+            <p class="rung-status"><b>A compression is not the thing compressed</b>Add a term that vanishes at every configuration the world realizes and every realized history keeps its score, while the momentum changes, and therefore the energy. The freedom is one number, and nothing in any history of the system distinguishes the settings from each other. Hand the line to somebody with a computer and out comes the arc of a thrown ball, the spectrum of hydrogen, the lifetime of a muon and the rate at which the sun burns. Then put the ball in their hand and push it. The line scores the path it takes. It says nothing whatever about why a pushed thing moves.</p>
+          </div>
+        </li>
+
+      </ol>
+    </section>
+
+    <!-- ========================= 06 READING =========================== -->
+    <section class="station" id="reading">
+      <div class="station-head">
+        <span class="station-index">06</span>
+        <h2>Reading the labels</h2>
+      </div>
+
+      <p class="lede">The corpus classifies every conclusion with one of seven status values. Two scopes never share one label, and an exact enumeration proves uniqueness only inside its declared menu until a grammar-completeness theorem covers all relevant three-axiom models.</p>
+
+      <dl class="legend">
+        <div class="legend-row"><dt>axiom_forced</dt><dd>A theorem covering every model of the applicable axioms.</dd></div>
+        <div class="legend-row"><dt>exact_named_realization</dt><dd>An exhaustively certified result inside one named finite realization. It proves existence and exactness inside that realization, not that the axioms select it.</dd></div>
+        <div class="legend-row"><dt>conditional_open_interface</dt><dd>Explicit mathematical or implementation premises are carried on the face of the claim.</dd></div>
+        <div class="legend-row"><dt>independence_limited</dt><dd>Delimited by countermodels, which are retained as permanent controls.</dd></div>
+        <div class="legend-row"><dt>physical_identification</dt><dd>An empirical attachment: the point where the mathematics meets a laboratory.</dd></div>
+        <div class="legend-row"><dt>discovery_only</dt><dd>A simulation pattern with no coverage theorem behind it.</dd></div>
+        <div class="legend-row"><dt>withdrawn</dt><dd>A claim the corpus has retired. Retired principles never reappear as premises of active claims.</dd></div>
+      </dl>
+
+      <p style="margin-top:1.6rem">Untyped phrases of the form "the axioms give recovery" or "the framework selects the matter content" are rejected by the registry checks. That rule is why this page carries a status line on every rung, and why the flagged paragraphs are as much of the content as the claims they sit under.</p>
+
+      <div class="flag">
+        <span class="flag-label">The shape of the whole argument</span>
+        <p>The chain on this page runs from a sense of "nothing" that keeps relations, through mutual determination, to a closure condition, to three axioms, to fourteen rungs of reconstruction. What it does not do is discharge the ontological step. Intrinsic realization remains a hypothesis: the mathematics fixes what would follow if it holds, and a fixed-point theorem does not make it hold.</p>
+      </div>
+    </section>
+
+    <!-- ========================= 07 SOURCES =========================== -->
+    <section class="station" id="sources">
+      <div class="station-head">
+        <span class="station-index">07</span>
+        <h2>Sources</h2>
+      </div>
+
+      <p class="quiet">Every quotation and figure on this page is drawn from the following files in this repository. Where a number appears, it is reproduced as that source prints it.</p>
+
+      <ul class="sources">
+        <li><b>essays/B-why-does-anything-exist.tex</b> &mdash; sections 3 (mutual determination), 7 (the closure condition), 8 (the meaning of "nothing"), 9 (description and realization, the finite realization lemma, intrinsic realization).</li>
+        <li><b>book/01-prologue.md</b> &mdash; Galileo's cabin, the six symptoms, the leaky abstraction, the one line.</li>
+        <li><b>book/03-chapter-02.md</b> &mdash; formal systems, the price of contradictions, the golden ratio as a fixed point, the exchange rate, the three requirements.</li>
+        <li><b>book/README.md</b> &mdash; the ten-part structure across chapters 1 to 40.</li>
+        <li><b>docs/AXIOM_REFERENCE.md</b> &mdash; A1, A2, A3, their "does not imply" clauses, the seven-value status vocabulary, and the closure principle stated as not a fourth axiom.</li>
+        <li><b>docs/GRAVITY_PREMISE_LADDER.md</b> &mdash; the eleven-rung premise ladder and its per-rung statuses.</li>
+        <li><b>docs/POSTDICTION_LEDGER.md</b> &mdash; the rank-three Gram quotient, the forced Lie type, the tau interval, and the status phrases quoted on the rungs.</li>
+        <li><b>book/15-chapter-14.md</b> through <b>book/31-chapter-30.md</b> &mdash; the fourteen rungs, in the book's own order.</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer class="colophon">
+    <p>Part of the Observer Patch Holography figure set. Companion to <a href="prediction-chain.svg">the reconstruction chain poster</a>.</p>
+    <p>Self-contained: one HTML file, no build step, no runtime dependency beyond two webfonts that degrade to system serif and system mono when offline.</p>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ------------------------------------------------------------------
+     The carrier boundary: 12 ports, 30 seams, 20 faces.
+     Vertices are the cyclic permutations of (0, +/-1, +/-phi). Two ports
+     are joined by a seam exactly when their squared separation is 4,
+     which yields 30 seams and gives every port degree five.
+     ------------------------------------------------------------------ */
+
+  var canvas = document.getElementById("carrier");
+  if (!canvas) { return; }
+  var ctx = canvas.getContext("2d");
+
+  var PHI = (1 + Math.sqrt(5)) / 2;
+  var ports = [];
+  for (var s1 = -1; s1 <= 1; s1 += 2) {
+    for (var s2 = -1; s2 <= 1; s2 += 2) {
+      ports.push([0, s1, s2 * PHI]);
+      ports.push([s1, s2 * PHI, 0]);
+      ports.push([s1 * PHI, 0, s2]);
+    }
+  }
+
+  var seams = [];
+  for (var a = 0; a < ports.length; a++) {
+    for (var b = a + 1; b < ports.length; b++) {
+      var dx = ports[a][0] - ports[b][0];
+      var dy = ports[a][1] - ports[b][1];
+      var dz = ports[a][2] - ports[b][2];
+      var d2 = dx * dx + dy * dy + dz * dz;
+      if (Math.abs(d2 - 4) < 1e-6) { seams.push([a, b]); }
+    }
+  }
+
+  function token(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+
+  var angle = reduce ? 0.6 : 0;
+  var TILT = -0.42;
+
+  function draw() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var size = canvas.clientWidth || 320;
+    if (canvas.width !== Math.round(size * dpr)) {
+      canvas.width = Math.round(size * dpr);
+      canvas.height = Math.round(size * dpr);
+    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, size, size);
+
+    var accent = token("--accent", "#12524E");
+    var soft = token("--accent-2", "#2F807A");
+
+    var cx = size / 2;
+    var cy = size / 2 - size * 0.035;
+    var scale = size * 0.215;
+
+    var ca = Math.cos(angle), sa = Math.sin(angle);
+    var ct = Math.cos(TILT), st = Math.sin(TILT);
+
+    var proj = ports.map(function (p) {
+      var x = p[0] * ca - p[2] * sa;
+      var z = p[0] * sa + p[2] * ca;
+      var y = p[1] * ct - z * st;
+      z = p[1] * st + z * ct;
+      var persp = 3.4 / (3.4 + z * 0.42);
+      return { x: cx + x * scale * persp, y: cy - y * scale * persp, z: z, p: persp };
+    });
+
+    var zs = proj.map(function (q) { return q.z; });
+    var zmin = Math.min.apply(null, zs), zmax = Math.max.apply(null, zs);
+    var span = (zmax - zmin) || 1;
+
+    ctx.lineCap = "round";
+    seams.slice().sort(function (s1, s2) {
+      return (proj[s1[0]].z + proj[s1[1]].z) - (proj[s2[0]].z + proj[s2[1]].z);
+    }).forEach(function (s) {
+      var q1 = proj[s[0]], q2 = proj[s[1]];
+      var depth = ((q1.z + q2.z) / 2 - zmin) / span;
+      ctx.globalAlpha = 0.14 + depth * 0.62;
+      ctx.strokeStyle = soft;
+      ctx.lineWidth = 0.7 + depth * 1.0;
+      ctx.beginPath();
+      ctx.moveTo(q1.x, q1.y);
+      ctx.lineTo(q2.x, q2.y);
+      ctx.stroke();
+    });
+
+    proj.map(function (q, i) { return { q: q, i: i }; })
+      .sort(function (m, n) { return m.q.z - n.q.z; })
+      .forEach(function (m) {
+        var depth = (m.q.z - zmin) / span;
+        ctx.globalAlpha = 0.32 + depth * 0.68;
+        ctx.fillStyle = accent;
+        ctx.beginPath();
+        ctx.arc(m.q.x, m.q.y, (size * 0.0115) * (0.72 + depth * 0.5), 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+    ctx.globalAlpha = 1;
+  }
+
+  draw();
+
+  if (!reduce) {
+    var last = performance.now();
+    (function frame(now) {
+      angle += (now - last) * 0.00012;
+      last = now;
+      draw();
+      requestAnimationFrame(frame);
+    })(last);
+  }
+
+  window.addEventListener("resize", draw);
+
+  /* ------------------------------------------------------------------
+     x <- 1 + 1/x, chapter 2's calculator exercise.
+     ------------------------------------------------------------------ */
+
+  var seed = document.getElementById("seed");
+  var out = document.getElementById("iterOut");
+  var note = document.getElementById("iterNote");
+  var PHI_STR = "1.6180339887";
+
+  function iterate() {
+    var x = parseFloat(seed.value);
+    out.textContent = "";
+
+    if (!isFinite(x) || x <= 0) {
+      note.textContent = "Chapter 2 asks for a positive number. Pick any at all: your age, the year, seven.";
+      return;
+    }
+
+    var steps = [];
+    var settledAt = -1;
+    for (var i = 0; i < 12; i++) {
+      x = 1 + 1 / x;
+      steps.push(x);
+      if (settledAt < 0 && x.toFixed(10) === PHI_STR) { settledAt = i; }
+    }
+
+    steps.forEach(function (v, i) {
+      var span = document.createElement("span");
+      span.textContent = String(i + 1).padStart(2, "0") + "  " + v.toFixed(10);
+      if (settledAt >= 0 && i >= settledAt) { span.className = "settled"; }
+      out.appendChild(span);
+    });
+
+    note.textContent = settledAt >= 0
+      ? "Settled on " + PHI_STR + " by step " + (settledAt + 1) + ". The fixed point satisfies x = 1 + 1/x, so x squared equals x plus one, whose positive root is (1 + √5)/2. Same destination from a thousand, from 0.001, or from the number of stairs in your building."
+      : "Still hunting after twelve steps. The error changes sign every step and shrinks, so the decimals settle from both directions at once. Give it more steps and it lands on " + PHI_STR + ".";
+  }
+
+  seed.addEventListener("input", iterate);
+  iterate();
+
+  /* ------------------------------------------------------------------
+     Rail scroll-spy.
+     ------------------------------------------------------------------ */
+
+  var links = Array.prototype.slice.call(document.querySelectorAll(".rail-list a"));
+  var sections = links.map(function (a) { return document.getElementById(a.getAttribute("href").slice(1)); });
+
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function () {
+      var best = -1, bestTop = Infinity;
+      sections.forEach(function (s, i) {
+        if (!s) { return; }
+        var top = s.getBoundingClientRect().top;
+        if (top <= window.innerHeight * 0.4 && Math.abs(top) < bestTop) {
+          bestTop = Math.abs(top);
+          best = i;
+        }
+      });
+      links.forEach(function (a, i) {
+        if (i === best) { a.setAttribute("aria-current", "true"); }
+        else { a.removeAttribute("aria-current"); }
+      });
+    }, { rootMargin: "-20% 0px -60% 0px", threshold: [0, 0.25, 0.5, 1] });
+    sections.forEach(function (s) { if (s) { io.observe(s); } });
+  }
+})();
+</script>
+
+</body>
+</html>
