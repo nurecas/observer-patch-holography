@@ -605,10 +605,15 @@ p:last-child { margin-bottom: 0; }
   margin-top: 0.15rem;
 }
 
-.rung-title {
+/* Overrides the utility h3 rule above: a rung title is a heading, not a label. */
+h3.rung-title {
+  font-family: Spectral, "Iowan Old Style", Palatino, Georgia, serif;
   font-size: var(--step-1);
   font-weight: 400;
   line-height: 1.28;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--ink);
   margin: 0 0 0.5rem;
   text-wrap: balance;
 }
@@ -997,7 +1002,7 @@ html { scroll-behavior: smooth; }
         <li class="rung">
           <div class="rung-n">01<small>ch 14</small></div>
           <div>
-            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Twelve ports</h3>
+            <h3 class="rung-title">Twelve ports</h3>
             <span class="rung-figure">12 ports &middot; 30 seams &middot; 20 faces</span>
             <p class="rung-body">Four conditions on how comparisons meet, every one of them checkable by something sitting inside the boundary with no view of it, leave exactly one count standing. Twelve is what happens when twenty triangles close up with five meeting at each corner. The count used no direction anywhere in it, which matters because the three directions get built out of twelve readings like these.</p>
             <p class="rung-status"><b>Status</b>A1 states the twelve-port packet as axiom content. The incidence consequences (inverse port, six axes, A&#8325;, the Galois-conjugate frame pair) are theorems about A1 carriers, proved separately, and the specific inverse-port law is an exact result inside a named realization rather than abstract A1 content.</p>
@@ -1007,7 +1012,7 @@ html { scroll-behavior: smooth; }
         <li class="rung">
           <div class="rung-n">02<small>ch 15</small></div>
           <div>
-            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Three dimensions</h3>
+            <h3 class="rung-title">Three dimensions</h3>
             <span class="rung-figure">rank-three Gram quotient</span>
             <p class="rung-body">The declared twelve-port repair mean selects an intrinsic rank-three Gram quotient as its normalized infinite-response limit. The antipodal-odd integer load quotient is Z&#8310;, the thirty-seam boundary image is the even-sum D&#8326; sublattice, and both embed densely into the same abstract three-dimensional Euclidean completion, on which the sixty proper carrier maps act faithfully and isometrically. Record counts in a region then grow as the inverse cube of the spacing, which is the three directions showing up in a count. No grid of little cubes was put in anywhere.</p>
             <p class="rung-status"><b>Exact intrinsic metric completion</b>Physical position, scale, refinement and gluing are not constructed.</p>
@@ -1017,7 +1022,7 @@ html { scroll-behavior: smooth; }
         <li class="rung">
           <div class="rung-n">03<small>ch 16</small></div>
           <div>
-            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Time, and only one way</h3>
+            <h3 class="rung-title">Time, and only one way</h3>
             <p class="rung-body">The past is the set of commits that have been made, together with the certified reads that tie them to one another. Its content is fixed because rewriting it would need information the writes destroyed. The future is the disagreements that have no commit yet: their content does not exist in any register in the world, because the repairs that would fix it have not been made. A defect that survives every repair the world can perform is a thing with a history, and the history is the chain of writes that carried it.</p>
             <p class="rung-status"><b>Exact formal boundary</b>Universe closure, repair execution order, observer record order, worldline realization, clock readout, proper time and optional global time are typed as distinct layers, and a canonical witness matrix rejects all 56 ordered transitive coercions between them. Physical time realization is not constructed.</p>
           </div>
@@ -1026,7 +1031,7 @@ html { scroll-behavior: smooth; }
         <li class="rung">
           <div class="rung-n">04<small>ch 17</small></div>
           <div>
-            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">A speed limit</h3>
+            <h3 class="rung-title">A speed limit</h3>
             <span class="rung-figure">seams crossed / repairs committed</span>
             <p class="rung-body">One seam per event, no faster, so a commit can only depend on commits within a certain number of seams of it. The edge of the web advances at a fixed number of seams per event, and turning that count into meters and seconds makes it a speed. Every observer computes the same ratio from its own books with nobody else's numbers in hand, because every observer's sky is a sphere, the maps between skies keep angles, and all of those maps move points on one and the same cone. The boundary is a property of the sphere rather than a property of light.</p>
             <p class="rung-status"><b>Note the direction of the argument</b>Two events either have an order everybody can read or have none at all. The 1983 metrological convention fixes c at 299,792,458 m/s exactly, so the number is a unit conversion and not a measurement.</p>
@@ -1036,7 +1041,7 @@ html { scroll-behavior: smooth; }
         <li class="rung">
           <div class="rung-n">05<small>ch 18</small></div>
           <div>
-            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Energy</h3>
+            <h3 class="rung-title">Energy</h3>
             <p class="rung-body">Positivity, additivity and conservation went into classical physics as three separate things the world was observed to do. They come out here as three readings of one move: a sum of squares has a floor, separated regions share no seam, and a single-sided entry cannot be written. Energy is what a region hands over when it is asked for it.</p>
             <p class="rung-status"><b>What the same move costs</b>Put a second question to the region at the same moment, about where the beam is, and the two have no joint answer. Which pairs of questions have a joint answer is a fact about the questions, and no instrument gets a vote.</p>
           </div>
@@ -1045,7 +1050,7 @@ html { scroll-behavior: smooth; }
         <li class="rung">
           <div class="rung-n">06<small>ch 20</small></div>
           <div>
-            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Tsirelson, and why twelve ports fall short of it</h3>
+            <h3 class="rung-title">Tsirelson, and why twelve ports fall short of it</h3>
             <span class="rung-figure">2.3416407865 of a ceiling at 2&#8730;2 = 2.8284271</span>
             <p class="rung-body">The ceiling comes out of two objects and nothing else: an algebra of questions carrying its brackets, and a state assigning odds to them. A universe with twelve ports has no thirteenth direction to offer, so four measurement settings drawn in order from twelve is 20,736 choices, few enough to take all of them. The best score is reached by 960 of the 20,736, and all 960 run the same way: three pairings at 63.43 degrees where the correlation is 1/&#8730;5, one on a shared axis where it is 1, giving 1 + (3&#8730;5)/5.</p>
             <p class="rung-body">It clears 2, so twelve observers on a closed surface do the thing no sealed answer sheet reproduces. It stops short of the ceiling because reaching the ceiling wants Bob's directions an eighth of a turn from Alice's, and an icosahedron's twelve corners offer exactly four angles: 0, 63.43, 116.57 and 180 degrees. An eighth of a turn is not among them.</p>
@@ -1056,7 +1061,7 @@ html { scroll-behavior: smooth; }
         <li class="rung">
           <div class="rung-n">07<small>ch 22</small></div>
           <div>
-            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Landauer heat</h3>
+            <h3 class="rung-title">Landauer heat</h3>
             <p class="rung-body">One number gets read off five instruments by five sets of people who did not know they were measuring the same thing: an engine reads it as heat over temperature, a gas as Boltzmann's count of arrangements, a memory as Shannon's count of questions and Landauer's price per question, a horizon as an area in square meters, and a public record as what a settled disagreement threw away. Every record ever written has been paid for in heat, at the temperature of whatever wrote it.</p>
             <p class="rung-status"><b>Where the bill lands</b>The heat leaves through the edge of the region holding the record. That puts the charge on the edge rather than on the volume inside it, which is the whole of the next rung.</p>
           </div>
@@ -1065,7 +1070,7 @@ html { scroll-behavior: smooth; }
         <li class="rung">
           <div class="rung-n">08<small>ch 23</small></div>
           <div>
-            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">The area law</h3>
+            <h3 class="rung-title">The area law</h3>
             <span class="rung-figure">~10&#8310;&#8311; severed seams per 10 cm square</span>
             <p class="rung-body">Entropy divides the way the seams divide. The number attached to a piece of boundary is a count of that piece's own severed seams, so halving the surface halves the number and equal areas carry equal counts, on any horizon, whatever sits behind them, because the area is the count. A patch reads the seams of its own collar one at a time; a ruler laid along that collar reads the same seams four Planck squares at a time.</p>
             <p class="rung-status"><b>What the balance is between</b>A count of what somebody would have to be told, against a shape. The surface is made of no material at all, and the only property it has to offer is a size.</p>
@@ -1075,7 +1080,7 @@ html { scroll-behavior: smooth; }
         <li class="rung">
           <div class="rung-n">09<small>ch 24</small></div>
           <div>
-            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Gravity as geometry</h3>
+            <h3 class="rung-title">Gravity as geometry</h3>
             <p class="rung-body">Every ingredient is something the observers count. The light cones and the horizons made of them are the order. A volume is a number of records. An area is a number of crossing reads, which are the previous rung's severed seams written into the order. At the settled state the entropy of every small ball, contents plus boundary, sits at its maximum, and the counts obey Einstein's equation. Curvature is what a settled network of observers looks like from a distance.</p>
             <p class="rung-status"><b>Eleven-rung premise ladder, and only the first rung is axiom-forced</b>Rung 1 (A3 existence, uniqueness, support, faithfulness) is <code>axiom_forced</code>. Rung 3 (edge-center decomposition and state alignment) is <code>independence_limited</code>. Rungs 2, 4, 5, 6, 7, 8 and 9 are <code>conditional_open_interface</code>. Rungs 10 and 11, vacuum and physical tower construction, and metrological and source-clock scale attachment, are <code>physical_identification</code>. No rung is promoted from A2 naturality or A3 optimization alone.</p>
           </div>
@@ -1084,7 +1089,7 @@ html { scroll-behavior: smooth; }
         <li class="rung">
           <div class="rung-n">10<small>ch 25</small></div>
           <div>
-            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Exactly these forces</h3>
+            <h3 class="rung-title">Exactly these forces</h3>
             <span class="rung-figure">su(3) + su(2) + u(1), as 8 + 3 + 1</span>
             <p class="rung-body">Complete compact port response from A1 and endogenous overlap transport from A2 force the abstract Lie type on the twelve-port carrier. The inputs were twelve ports and thirty seams, sixty rotations, the requirement that every relabeling be an inside job, the splitting of twelve readings into blocks of 1, 3, 3' and 5, and Killing and Cartan's classification of the sizes a simple group is allowed to have, finished before the electron was discovered. The count consulted no mass, no coupling strength, no decay rate and no accelerator run.</p>
             <p class="rung-status"><b>Axiom-forced abstract Lie type; conditional matrix witness</b>The released charged-double-triplet matrices are an exact declared witness. Ordered source tomography and same-current holonomy are not constructed, and the global group form (SU(3) &times; SU(2) &times; U(1))/Z&#8326; is an exact conditional kernel result, not a source selection.</p>
@@ -1094,7 +1099,7 @@ html { scroll-behavior: smooth; }
         <li class="rung">
           <div class="rung-n">11<small>ch 26</small></div>
           <div>
-            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Three generations</h3>
+            <h3 class="rung-title">Three generations</h3>
             <span class="rung-figure">carrier module 1 + 3 + 3' + 5</span>
             <p class="rung-body">Each of the twenty faces has its own threefold rotation cycling its three corners, and something has to carry that turn. The number of copies of the roster is the width of whatever carries it. The twelve directions break into uncuttable pieces of sizes 1, 3, 3' and 5. The piece of size one takes the same value under every rotation and can carry no phase at all; there is no piece of size four, so a fourth copy has nowhere to ride, and no piece of size two either. Priced, the three eligible pieces cost 5 &minus; &#8730;5, 6 and 5 + &#8730;5, that is 2.7639, 6 and 7.2361. The cheapest is a piece of size three.</p>
             <p class="rung-status"><b>Checkable from outside</b>The four LEP detectors give 2.9840 &plusmn; 0.0082 light neutrino species, three to within a percent, with no room for a fourth light one. The one-generation hypercharge multiset is selected by an exhaustive scan of all 1024 subsets of the declared exterior-response algebra; physical matter attachment is a separate step.</p>
@@ -1104,7 +1109,7 @@ html { scroll-behavior: smooth; }
         <li class="rung">
           <div class="rung-n">12<small>ch 28</small></div>
           <div>
-            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">1/137</h3>
+            <h3 class="rung-title">1/137</h3>
             <span class="rung-figure">closure 137.035660 &nbsp;vs&nbsp; laboratory 137.035999</span>
             <p class="rung-body">The constants are wired together. The screen grain P enters the coupling the forces share, running that down the range returns alpha, and alpha appears back inside P. The grain also enters a budget, the budget enters the capacity N, and the capacity fixes the dimensionless cosmological term through 3&#960;/N. A loop of that shape is chapter 2's equation with the world inside it: the unknown stands on both sides, and the loop has one solution rather than a dial. The capacity lands four parts in a thousand from the weighted expansion coordinate.</p>
             <p class="rung-status"><b>Interval-certified fixed point; laboratory attachment open</b>The screen-grain proposal P = &#966; + &#8730;&#960;/A&#7451;(P) has an interval-certified fixed point, and its laboratory attachment awaits the same-scheme hadronic transport. The quark cloud holds the difference between 137.035660 and 137.035999. The direct capacity proposal N = log M&#8320;(&#120108;&#8345;) is not evaluable on the incomplete source antecedent, and the finite source selects neither global capacity action.</p>
@@ -1114,7 +1119,7 @@ html { scroll-behavior: smooth; }
         <li class="rung">
           <div class="rung-n">13<small>ch 29</small></div>
           <div>
-            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">Masses, and the place the geometry stops</h3>
+            <h3 class="rung-title">Masses, and the place the geometry stops</h3>
             <span class="rung-figure">&#964; in [1776.968991, 1776.969063] MeV &nbsp;&middot;&nbsp; 0.4336 &#963;</span>
             <p class="rung-body">The balance at the corners of one oriented face, equal weight for the two ways they can respond, is Koide's two thirds. Handed the electron and the muon, the wiring pins the tau inside 72 electron-volts and prints the value at which the balance dies. The same wiring fixes the electric charges to every decimal anyone has measured, the number of colors at three and the number of families at three.</p>
             <p class="rung-body">Then it stops. Quark mixing wants an angle of 13.0029 degrees. The smallest angle the solid has to offer is 20.9052, sixty percent larger, and relabeling which axis is which does nothing because the floor is a property of the solid rather than of the labeling. All 465 angles were written out in full and read down to the last one. The angle is not there.</p>
@@ -1125,7 +1130,7 @@ html { scroll-behavior: smooth; }
         <li class="rung terminus">
           <div class="rung-n">14<small>ch 30</small></div>
           <div>
-            <h3 class="rung-title" style="font-family:Spectral,Georgia,serif;text-transform:none;letter-spacing:normal;color:var(--ink)">The Lagrangian, arriving last</h3>
+            <h3 class="rung-title">The Lagrangian, arriving last</h3>
             <p class="rung-body">The line that fits on a coffee mug is where every other account of the world begins. Here it is rung fourteen. Nobody derives it in the ordinary telling: it is written down and then adjusted until it matches experiment, its symmetry group selected because it matched what the detectors reported, its three families put in because experiments found three, and somewhere between nineteen and twenty-six of its numbers measured in laboratories and typed in.</p>
             <p class="rung-body">By this rung the charges, the color count, the family count, the gauge Lie type and the lepton balance have arrived from counting on a wiring diagram. The settled entries and the untouched ones end up on the same line, side by side, with nothing marking which is which.</p>
             <p class="rung-status"><b>A compression is not the thing compressed</b>Add a term that vanishes at every configuration the world realizes and every realized history keeps its score, while the momentum changes, and therefore the energy. The freedom is one number, and nothing in any history of the system distinguishes the settings from each other. Hand the line to somebody with a computer and out comes the arc of a thrown ball, the spectrum of hydrogen, the lifetime of a muon and the rate at which the sun burns. Then put the ball in their hand and push it. The line scores the path it takes. It says nothing whatever about why a pushed thing moves.</p>
@@ -1362,24 +1367,25 @@ html { scroll-behavior: smooth; }
   var links = Array.prototype.slice.call(document.querySelectorAll(".rail-list a"));
   var sections = links.map(function (a) { return document.getElementById(a.getAttribute("href").slice(1)); });
 
-  if ("IntersectionObserver" in window) {
-    var io = new IntersectionObserver(function () {
-      var best = -1, bestTop = Infinity;
-      sections.forEach(function (s, i) {
-        if (!s) { return; }
-        var top = s.getBoundingClientRect().top;
-        if (top <= window.innerHeight * 0.4 && Math.abs(top) < bestTop) {
-          bestTop = Math.abs(top);
-          best = i;
-        }
-      });
-      links.forEach(function (a, i) {
-        if (i === best) { a.setAttribute("aria-current", "true"); }
-        else { a.removeAttribute("aria-current"); }
-      });
-    }, { rootMargin: "-20% 0px -60% 0px", threshold: [0, 0.25, 0.5, 1] });
-    sections.forEach(function (s) { if (s) { io.observe(s); } });
+  var ticking = false;
+
+  function spy() {
+    ticking = false;
+    var line = window.innerHeight * 0.3;
+    var current = 0;
+    sections.forEach(function (s, i) {
+      if (s && s.getBoundingClientRect().top <= line) { current = i; }
+    });
+    links.forEach(function (a, i) {
+      if (i === current) { a.setAttribute("aria-current", "true"); }
+      else { a.removeAttribute("aria-current"); }
+    });
   }
+
+  window.addEventListener("scroll", function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(spy); }
+  }, { passive: true });
+  spy();
 })();
 </script>
 

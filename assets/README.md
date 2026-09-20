@@ -5,6 +5,7 @@ This directory holds the public diagrams used by the README, papers, book, and O
 ## Theory Overview
 
 - [Reconstruction chain](prediction-chain.svg), embedded in the root README
+- [Origin chain](origin-chain.html), a self-contained scrolling page from the three senses of "nothing" through A1, A2 and A3 to the fourteen-rung reconstruction ladder, with each rung's status line carried from `docs/AXIOM_REFERENCE.md`, `docs/GRAVITY_PREMISE_LADDER.md` and `docs/POSTDICTION_LEDGER.md`
 - [Unification diagram](OPH_Unification_Diagram.svg) ([PNG](OPH_Unification_Diagram.png))
 - [Science overlap map](oph_science_overlap_map.svg) ([poster PNG](oph_science_overlap_map_poster.png))
 - [Observer screen](screen.svg)
