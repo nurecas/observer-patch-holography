@@ -445,8 +445,10 @@ footer p { margin: 0 0 0.55rem; max-width: 42rem; }
           <dt>selection</dt><dd id="r-sel">all twelve</dd>
           <dt>axes</dt><dd>6</dd>
           <dt>ports</dt><dd>12</dd>
-          <dt>pair angle</dt><dd>63.4349&deg;</dd>
+          <dt>port angle</dt><dd id="r-ang">63.4349&deg;</dd>
+          <dt>fiber gap</dt><dd id="r-gap">31.7&deg; to 90&deg;</dd>
           <dt>linking</dt><dd id="r-link">1 each</dd>
+          <dt>fiber length</dt><dd>2&#960; each</dd>
           <dt>rank</dt><dd>3</dd>
         </dl>
       </div>
@@ -463,6 +465,8 @@ footer p { margin: 0 0 0.55rem; max-width: 42rem; }
     <button type="button" data-axis="4" aria-pressed="false">5</button>
     <button type="button" data-axis="5" aria-pressed="false">6</button>
     <button type="button" id="spin" aria-pressed="true">spin</button>
+    <button type="button" id="mist" aria-pressed="true">field</button>
+    <button type="button" id="fitall" aria-pressed="false">fit all</button>
     <span class="hint">drag either panel to turn</span>
   </div>
 
@@ -476,6 +480,16 @@ footer p { margin: 0 0 0.55rem; max-width: 42rem; }
     <p>The left panel is the preimage. Each port lifts to a circle, and the circle is a whole family of internal states that produce the same public reading. Turn around one of those circles and nothing at the boundary changes at all.</p>
 
     <p>That is the useful part of the picture rather than the pretty part. The axiom's own presentation firewall says that hidden labels, embedding coordinates, materials and memory layouts must not enter protected outputs. Here that stops being a hygiene rule and becomes a fact about the shape of the readout: <b>the readout has fibers, and the fiber is exactly the part no public reading resolves</b>.</p>
+
+    <h3>The circles are closed, and one of them nearly is not</h3>
+
+    <p>Each fiber is a great circle in S&sup3; of length exactly 2&#960;. None of them runs off to infinity. Stereographic projection does send exactly one fiber to a straight line, the one passing through the point you project from, and that is the only exception there is. The projection axis here runs through a face centre of the carrier, the deepest hole in the port set, which puts every port a comfortable 37.3774&deg; away from it. So all twelve close. Three of them have a projected radius of about 6 and sweep out of the frame at the default zoom, which is what makes them look open; press <b>fit all</b> and they close.</p>
+
+    <h3>What a dipole looks like down here</h3>
+
+    <p>Two Hopf fibers never meet and never vary in how far apart they are: they keep a constant distance everywhere along their length, which is what Clifford parallelism means. That distance is exactly half the angle between the two ports on the screen.</p>
+
+    <p>So the six axes, whose ports sit at 63.4349&deg;, give fibers a constant 31.717&deg; apart. A dipole's two ports are antipodal, 180&deg; apart, so its two fibers sit at <b>90&deg;, everywhere, which is the widest two fibers can be</b>. The &plusmn; pairing is not a label written on top of the picture. It is the unique pair of circles at the maximum separation, and selecting a dipole shows it: the two cores, with the fibers over the circles of latitude around that axis filling in as nested tori between them.</p>
 
     <h3>Every pair passes through every other</h3>
 
@@ -688,6 +702,60 @@ footer p { margin: 0 0 0.55rem; max-width: 42rem; }
     f.forEach(function (q) { extent = Math.max(extent, Math.hypot(q[0], q[1], q[2])); });
   });
 
+  function maxR(f) {
+    var m = 0;
+    for (var i = 0; i < f.length; i++) { m = Math.max(m, Math.hypot(f[i][0], f[i][1], f[i][2])); }
+    return m;
+  }
+
+  /* Every point of the screen has a fiber, not just the twelve ports.
+     This is an even sample of the rest of them, drawn faintly, so the
+     ports read as a selection out of a continuum rather than as the
+     whole contents of the space. Points close to the projection pole
+     are dropped: their fibers are correct but enormous, and they would
+     swamp the frame. */
+  var CTX_SAMPLES = 52;
+  var field = (function () {
+    var out = [], ga = Math.PI * (3 - Math.sqrt(5)), N = 190;
+    for (var i = 0; i < N; i++) {
+      var y = 1 - (i / (N - 1)) * 2;
+      var r = Math.sqrt(Math.max(0, 1 - y * y));
+      var th = ga * i;
+      var f = byArcLength(rawFiber([Math.cos(th) * r, y, Math.sin(th) * r], 600), CTX_SAMPLES);
+      if (maxR(f) < 7) { out.push(f); }
+    }
+    return out;
+  })();
+
+  /* The fibers over the circles of latitude around one dipole axis form
+     nested tori, with that dipole's two ports as the two core circles.
+     That is the classical picture of the fibration, and here it is
+     centred on the pair being highlighted. Built on first use. */
+  var torusCache = {};
+  function torusFor(a) {
+    if (torusCache[a]) { return torusCache[a]; }
+    var axis = ports[axes[a][0]];
+    var seed = Math.abs(axis[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0];
+    var e1 = norm(cross(axis, seed));
+    var e2 = cross(axis, e1);
+    var out = [];
+    [40, 72, 108, 140].forEach(function (deg) {
+      var ps = deg * Math.PI / 180, cs = Math.cos(ps), sn = Math.sin(ps);
+      for (var k = 0; k < 13; k++) {
+        var ph = TAU * k / 13, cp = Math.cos(ph), sp = Math.sin(ph);
+        var p = [
+          axis[0] * cs + (e1[0] * cp + e2[0] * sp) * sn,
+          axis[1] * cs + (e1[1] * cp + e2[1] * sp) * sn,
+          axis[2] * cs + (e1[2] * cp + e2[2] * sp) * sn
+        ];
+        var f = byArcLength(rawFiber(norm(p), 600), CTX_SAMPLES);
+        if (maxR(f) < 7) { out.push(f); }
+      }
+    });
+    torusCache[a] = out;
+    return out;
+  }
+
   /* Stereographic projection always spreads the fiber sizes: the ports
      nearest the projection pole blow up to radius ~6 while the far ones
      sit near 1.4. Fitting the largest would shrink the rest to nothing,
@@ -697,6 +765,7 @@ footer p { margin: 0 0 0.55rem; max-width: 42rem; }
 
   /* ---------- camera ---------- */
   var yaw = 0.6, pitch = -0.42, spinning = !reduce, selected = -1;
+  var showField = true, fitAll = false;
 
   function rotate(q) {
     var cy = Math.cos(yaw), sy = Math.sin(yaw);
@@ -740,18 +809,40 @@ footer p { margin: 0 0 0.55rem; max-width: 42rem; }
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
 
-    var scale = Math.min(W, H) * 0.46 / fitR;
+    var scale = Math.min(W, H) * 0.46 / (fitAll ? extent : fitR);
     var cx = W / 2, cy = H / 2;
     var cam = 3.4 * extent;
 
-    // project every sample once
-    var proj = fibers.map(function (fib) {
-      return fib.map(function (q) {
-        var r = rotate(q);
-        var persp = cam / (cam - r[2]);
-        return { x: cx + r[0] * scale * persp, y: cy - r[1] * scale * persp, z: r[2] };
-      });
-    });
+    function project(q) {
+      var r = rotate(q);
+      var persp = cam / (cam - r[2]);
+      return { x: cx + r[0] * scale * persp, y: cy - r[1] * scale * persp, z: r[2] };
+    }
+
+    /* Context pass: the surrounding fibers, or the selected dipole's own
+       nested tori. Drawn whole and unsorted with no halo, because at this
+       opacity the draw order is invisible and the cost is not. */
+    if (showField) {
+      var ctxSet = selected < 0 ? field : torusFor(selected);
+      ctx.lineWidth = 1;
+      for (var c = 0; c < ctxSet.length; c++) {
+        var pts = ctxSet[c], zs = 0;
+        ctx.beginPath();
+        for (var m = 0; m <= CTX_SAMPLES; m++) {
+          var q = project(pts[m % CTX_SAMPLES]);
+          zs += q.z;
+          if (m === 0) { ctx.moveTo(q.x, q.y); } else { ctx.lineTo(q.x, q.y); }
+        }
+        var md = (zs / (CTX_SAMPLES + 1) + extent) / (2 * extent);
+        ctx.strokeStyle = line;
+        ctx.globalAlpha = (selected < 0 ? 0.07 : 0.13) + md * 0.17;
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    // project every sample of the twelve once
+    var proj = fibers.map(function (fib) { return fib.map(project); });
 
     /* Depth-sort whole ARCS, not single segments. A per-segment halo
        erases the neighbouring segments of its own fiber, because they are
@@ -765,6 +856,9 @@ footer p { margin: 0 0 0.55rem; max-width: 42rem; }
        segment at each end puts stroke back over everything the halo took. */
     var arcs = [];
     for (var i = 0; i < proj.length; i++) {
+      // with a dipole selected, its pair is the whole foreground; the
+      // other ten would only compete with the tori behind them
+      if (selected >= 0 && axisOf[i] !== selected) { continue; }
       for (var a = 0; a < ARCS; a++) {
         var pts = [], zsum = 0;
         for (var k = -1; k <= PER + 1; k++) {
@@ -782,9 +876,9 @@ footer p { margin: 0 0 0.55rem; max-width: 42rem; }
 
     for (var s = 0; s < arcs.length; s++) {
       var g = arcs[s];
-      var on = selected < 0 || axisOf[g.i] === selected;
+      var on = true;
       var depth = (g.z + extent) / (2 * extent);
-      var width = (1.0 + depth * 2.4) * (on ? 1 : 0.5);
+      var width = 1.0 + depth * 2.4;
 
       ctx.beginPath();
       ctx.moveTo(g.pts[0].x, g.pts[0].y);
@@ -796,10 +890,17 @@ footer p { margin: 0 0 0.55rem; max-width: 42rem; }
          so it would chop the highlighted pair into dashes. With a dipole
          selected, only the pair carries a halo. */
       if (on) {
+        /* Butt caps, deliberately. A round cap overhangs its own stroke
+           longitudinally by half the halo width, so at every arc joint it
+           erases a sliver of the neighbour that nothing repaints, and the
+           curve reads as a dashed line. A butt cap stops dead at the
+           endpoint and cannot reach past it. */
+        ctx.lineCap = "butt";
         ctx.strokeStyle = bg;
         ctx.lineWidth = width + 2.8;
         ctx.globalAlpha = 1;
         ctx.stroke();
+        ctx.lineCap = "round";
       }
 
       ctx.strokeStyle = on ? (selected >= 0 ? hot : line) : dim;
@@ -894,6 +995,9 @@ footer p { margin: 0 0 0.55rem; max-width: 42rem; }
   var rSel = document.getElementById("r-sel");
   var rLink = document.getElementById("r-link");
 
+  var rAng = document.getElementById("r-ang");
+  var rGap = document.getElementById("r-gap");
+
   function select(a) {
     selected = a;
     buttons.forEach(function (b) {
@@ -901,11 +1005,27 @@ footer p { margin: 0 0 0.55rem; max-width: 42rem; }
     });
     rSel.textContent = a < 0 ? "all twelve" : "axis " + (a + 1) + ", 2 ports";
     rLink.textContent = a < 0 ? "1 each" : "1";
+    // two fibers sit at a constant distance in S3, exactly half the angle
+    // between their ports. A dipole is the unique pair at the maximum.
+    rAng.textContent = a < 0 ? "63.4349°" : "180°";
+    rGap.textContent = a < 0 ? "31.7° to 90°" : "90.000° max";
     if (!spinning) { draw(); }
   }
   buttons.forEach(function (b) {
     b.addEventListener("click", function () { select(Number(b.dataset.axis)); });
   });
+
+  function toggle(id, get, set) {
+    var el = document.getElementById(id);
+    el.setAttribute("aria-pressed", String(get()));
+    el.addEventListener("click", function () {
+      set(!get());
+      el.setAttribute("aria-pressed", String(get()));
+      if (!spinning) { draw(); }
+    });
+  }
+  toggle("mist", function () { return showField; }, function (v) { showField = v; });
+  toggle("fitall", function () { return fitAll; }, function (v) { fitAll = v; });
 
   var spinBtn = document.getElementById("spin");
   spinBtn.setAttribute("aria-pressed", String(spinning));
