@@ -1,0 +1,962 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Twelve Linked Fibers</title>
+<meta name="description" content="Six dipoles as twelve Hopf fibers: what an observer shows on its screen, and what it is underneath. A speculative reading of the OPH carrier, with the geometry verified.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap">
+<style>
+/* ---------------------------------------------------------------------
+   Twelve Linked Fibers
+   Companion to origin-chain.html and sharing its palette: teal ink on
+   cool paper, with the clay flag reserved for what is not proved.
+   --------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+
+  --paper:      #F2F4F3;
+  --surface:    #FAFBFA;
+  --surface-2:  #EAEEEC;
+  --ink:        #131F1E;
+  --ink-soft:   #4C5C5A;
+  --ink-faint:  #778785;
+  --rule:       #D2DBD9;
+  --rule-soft:  #E2E8E6;
+  --accent:     #12524E;
+  --accent-2:   #2F807A;
+  --accent-wash:#E1EDEB;
+  --flag:       #8E4F2B;
+  --flag-wash:  #F2E7DE;
+  --flag-rule:  #DCC3AE;
+
+  /* figure ground: its own surface, so the tangle reads on either theme */
+  --fig-bg:     #F7F9F8;
+  --fig-line:   #14544F;
+  --fig-dim:    #9FB6B3;
+  --fig-hot:    #0B1F1E;
+
+  --measure: 34rem;
+
+  --step--1: clamp(0.76rem, 0.74rem + 0.1vw, 0.82rem);
+  --step-0:  clamp(1.03rem, 1rem + 0.16vw, 1.12rem);
+  --step-1:  clamp(1.22rem, 1.15rem + 0.35vw, 1.4rem);
+  --step-2:  clamp(1.5rem, 1.35rem + 0.75vw, 1.95rem);
+  --step-3:  clamp(2.1rem, 1.7rem + 2vw, 3.3rem);
+
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper:      #0E1615;
+    --surface:    #141E1D;
+    --surface-2:  #1A2625;
+    --ink:        #E5EBE9;
+    --ink-soft:   #9DACA9;
+    --ink-faint:  #71807D;
+    --rule:       #2A3836;
+    --rule-soft:  #1F2C2B;
+    --accent:     #6FC2B7;
+    --accent-2:   #4FA89D;
+    --accent-wash:#152927;
+    --flag:       #DB9764;
+    --flag-wash:  #241A13;
+    --flag-rule:  #4A362A;
+    --fig-bg:     #0B1211;
+    --fig-line:   #5FBDB1;
+    --fig-dim:    #2C4441;
+    --fig-hot:    #EAF4F2;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper:      #0E1615;
+  --surface:    #141E1D;
+  --surface-2:  #1A2625;
+  --ink:        #E5EBE9;
+  --ink-soft:   #9DACA9;
+  --ink-faint:  #71807D;
+  --rule:       #2A3836;
+  --rule-soft:  #1F2C2B;
+  --accent:     #6FC2B7;
+  --accent-2:   #4FA89D;
+  --accent-wash:#152927;
+  --flag:       #DB9764;
+  --flag-wash:  #241A13;
+  --flag-rule:  #4A362A;
+  --fig-bg:     #0B1211;
+  --fig-line:   #5FBDB1;
+  --fig-dim:    #2C4441;
+  --fig-hot:    #EAF4F2;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Spectral, "Iowan Old Style", Palatino, Georgia, serif;
+  font-size: var(--step-0);
+  line-height: 1.62;
+  -webkit-text-size-adjust: 100%;
+}
+
+img, svg, canvas { max-width: 100%; }
+
+a { color: var(--accent); text-underline-offset: 0.18em; }
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 3px;
+}
+
+.wrap {
+  max-width: 58rem;
+  margin: 0 auto;
+  padding-inline: 1.25rem;
+}
+@media (min-width: 52rem) { .wrap { padding-inline: 2rem; } }
+
+.mono {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+/* --- masthead --------------------------------------------------------- */
+
+.masthead { padding-block: clamp(2.25rem, 5vw, 3.75rem) 1.75rem; }
+
+.eyebrow {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  margin: 0 0 1rem;
+}
+
+h1 {
+  font-size: var(--step-3);
+  font-weight: 300;
+  line-height: 1.04;
+  letter-spacing: -0.022em;
+  text-wrap: balance;
+  margin: 0 0 1rem;
+  max-width: 18ch;
+}
+
+.standfirst {
+  font-size: var(--step-1);
+  font-weight: 300;
+  line-height: 1.48;
+  color: var(--ink-soft);
+  margin: 0;
+  max-width: 44ch;
+}
+
+/* --- the stage -------------------------------------------------------- */
+
+.stage {
+  display: grid;
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  margin-block: 2rem;
+}
+@media (min-width: 46rem) {
+  .stage { grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr); }
+}
+
+.panel { background: var(--fig-bg); position: relative; min-width: 0; }
+
+.panel canvas { display: block; width: 100%; height: auto; touch-action: none; cursor: grab; }
+.panel canvas:active { cursor: grabbing; }
+
+.panel-tag {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.75rem;
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  pointer-events: none;
+}
+
+.side { display: grid; grid-template-rows: auto 1fr; background: var(--rule); gap: 1px; }
+.side > * { background: var(--fig-bg); }
+
+.readout {
+  padding: 0.9rem 0.95rem 1rem;
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.7rem;
+  line-height: 1.75;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.readout dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 0.1rem 0.8rem; }
+.readout dt { color: var(--ink-faint); }
+.readout dd { margin: 0; color: var(--accent); text-align: right; }
+
+/* --- controls --------------------------------------------------------- */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.75rem 0.85rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-top: 0;
+  margin-top: -2rem;
+  margin-bottom: 2.25rem;
+}
+
+.controls-label {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-right: 0.35rem;
+}
+
+.controls button {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 0.28rem 0.6rem;
+  cursor: pointer;
+  transition: color 110ms linear, border-color 110ms linear, background 110ms linear;
+}
+.controls button:hover { color: var(--ink); border-color: var(--accent-2); }
+.controls button[aria-pressed="true"] {
+  color: var(--paper);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.hint {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.66rem;
+  color: var(--ink-faint);
+  margin-left: auto;
+}
+
+/* --- prose ------------------------------------------------------------ */
+
+section { padding-block: clamp(2.25rem, 5vw, 3.5rem); border-top: 1px solid var(--rule); }
+section > * { max-width: var(--measure); }
+section > .full { max-width: none; }
+
+h2 {
+  font-size: var(--step-2);
+  font-weight: 300;
+  line-height: 1.16;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  margin: 0 0 1.2rem;
+}
+
+h3 {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 2.2rem 0 0.8rem;
+}
+
+p { margin: 0 0 1.1rem; }
+p:last-child { margin-bottom: 0; }
+.lede { font-size: var(--step-1); font-weight: 300; line-height: 1.5; color: var(--ink-soft); }
+
+.formula {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.88rem;
+  text-align: center;
+  color: var(--accent);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  padding: 0.95rem 0.85rem;
+  margin: 1.4rem 0;
+  overflow-x: auto;
+}
+.formula small {
+  display: block;
+  margin-top: 0.45rem;
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+}
+
+.flag {
+  border-left: 2px solid var(--flag);
+  background: var(--flag-wash);
+  padding: 0.95rem 1.1rem;
+  margin: 1.6rem 0;
+}
+.flag-label {
+  display: block;
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--flag);
+  margin-bottom: 0.45rem;
+}
+.flag p { font-size: 0.94rem; line-height: 1.55; margin-bottom: 0.7rem; }
+.flag p:last-child { margin-bottom: 0; }
+
+/* --- agreement table -------------------------------------------------- */
+
+.table-scroll { overflow-x: auto; margin: 1.5rem 0 0.6rem; }
+
+.gram {
+  border-collapse: collapse;
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.74rem;
+  font-variant-numeric: tabular-nums;
+}
+.gram th, .gram td {
+  border: 1px solid var(--rule);
+  padding: 0.4rem 0.55rem;
+  text-align: center;
+  min-width: 2.9rem;
+}
+.gram th { color: var(--ink-faint); font-weight: 500; background: var(--surface-2); }
+.gram td { color: var(--accent); background: var(--surface); }
+.gram td.diag { color: var(--ink-faint); background: var(--surface-2); }
+
+.caption {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.68rem;
+  line-height: 1.6;
+  color: var(--ink-faint);
+  margin: 0.6rem 0 0;
+}
+
+/* --- the crossing ----------------------------------------------------- */
+
+.crossing {
+  display: grid;
+  gap: 1.5rem;
+  align-items: center;
+  margin: 1.8rem 0 0;
+}
+@media (min-width: 42rem) { .crossing { grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); } }
+
+.crossing svg { display: block; width: 100%; height: auto; background: var(--surface); border: 1px solid var(--rule); }
+
+.solve {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.78rem;
+  line-height: 2;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.solve b { color: var(--accent); font-weight: 600; }
+
+/* --- verified strip --------------------------------------------------- */
+
+.verified {
+  display: grid;
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  margin: 1.8rem 0 0;
+}
+@media (min-width: 38rem) { .verified { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 58rem) { .verified { grid-template-columns: repeat(4, 1fr); } }
+
+.verified div { background: var(--surface); padding: 0.85rem 0.95rem; }
+.verified dt {
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 0.3rem;
+}
+.verified dd {
+  margin: 0;
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.86rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+footer {
+  padding-block: 2.25rem 3.5rem;
+  border-top: 1px solid var(--rule);
+  font-family: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.7rem;
+  line-height: 1.7;
+  color: var(--ink-faint);
+}
+footer p { margin: 0 0 0.55rem; max-width: 42rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Observer Patch Holography &middot; speculative reading</p>
+    <h1>Twelve linked fibers</h1>
+    <p class="standfirst">Six dipoles, twelve ports, and the circles they correspond to. One view is what an observer shows. The other is what it is.</p>
+  </header>
+
+  <div class="stage full">
+    <div class="panel">
+      <span class="panel-tag">The fibers &middot; S&sup3; drawn in R&sup3;</span>
+      <canvas id="fibers" width="900" height="720" role="img"
+        aria-label="Twelve circles in three dimensions, each the Hopf preimage of one port, every pair linked exactly once."></canvas>
+    </div>
+    <div class="side">
+      <div class="panel" style="min-height:0">
+        <span class="panel-tag">The screen &middot; S&sup2;</span>
+        <canvas id="screen" width="480" height="480" role="img"
+          aria-label="A sphere carrying twelve ports in six antipodal pairs, with the six dipole axes drawn as diameters."></canvas>
+      </div>
+      <div class="readout">
+        <dl>
+          <dt>selection</dt><dd id="r-sel">all twelve</dd>
+          <dt>axes</dt><dd>6</dd>
+          <dt>ports</dt><dd>12</dd>
+          <dt>pair angle</dt><dd>63.4349&deg;</dd>
+          <dt>linking</dt><dd id="r-link">1 each</dd>
+          <dt>rank</dt><dd>3</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls full">
+    <span class="controls-label">Dipole</span>
+    <button type="button" id="d-all" data-axis="-1" aria-pressed="true">all</button>
+    <button type="button" data-axis="0" aria-pressed="false">1</button>
+    <button type="button" data-axis="1" aria-pressed="false">2</button>
+    <button type="button" data-axis="2" aria-pressed="false">3</button>
+    <button type="button" data-axis="3" aria-pressed="false">4</button>
+    <button type="button" data-axis="4" aria-pressed="false">5</button>
+    <button type="button" data-axis="5" aria-pressed="false">6</button>
+    <button type="button" id="spin" aria-pressed="true">spin</button>
+    <span class="hint">drag either panel to turn</span>
+  </div>
+
+  <section>
+    <h2>What the two panels are</h2>
+
+    <p class="lede">Put a point on the sphere. The Hopf map hands back a circle. Every point of the screen has one, no two of them meet, and together they fill the space.</p>
+
+    <p>The right panel is the observer's screen: twelve ports in six antipodal pairs, each pair one dipole, with the six axes drawn as diameters. Everything a neighbor can read off this observer is a reading at one of those twelve places.</p>
+
+    <p>The left panel is the preimage. Each port lifts to a circle, and the circle is a whole family of internal states that produce the same public reading. Turn around one of those circles and nothing at the boundary changes at all.</p>
+
+    <p>That is the useful part of the picture rather than the pretty part. The axiom's own presentation firewall says that hidden labels, embedding coordinates, materials and memory layouts must not enter protected outputs. Here that stops being a hygiene rule and becomes a fact about the shape of the readout: <b>the readout has fibers, and the fiber is exactly the part no public reading resolves</b>.</p>
+
+    <h3>Every pair passes through every other</h3>
+
+    <p>Select a single dipole and watch the two circles. They do not touch and they cannot be pulled apart. That holds for any two of the twelve, not just the antipodal ones: each pair has linking number one, which I computed over all sixty-six pairs by Gauss integral before drawing any of this.</p>
+
+    <p>So no port's internal states can be separated from any other port's. Whatever the observer is, it is not a bundle of twelve independent things sitting next to each other. Pull on one and you have hold of all of them.</p>
+  </section>
+
+  <section>
+    <h2>Six axes, one angle</h2>
+
+    <p class="lede">Strip the geometry away and only the agreement table is left: how strongly each dipole's reading correlates with each other one. No dipole is privileged, so every off-diagonal entry has the same size. The diagonal is blank, because a reading agrees with itself for free.</p>
+
+    <div class="table-scroll full">
+      <table class="gram" id="gram">
+        <caption class="caption" style="caption-side:bottom;text-align:left">
+          Computed from the six axes, not typed in. Each entry is the correlation between two dipole readings.
+        </caption>
+      </table>
+    </div>
+
+    <p class="caption">Every off-diagonal magnitude is 0.4472135955, which is 1&nbsp;/&nbsp;&#8730;5, an angle of 63.4349&deg;. The signs are the dipoles' own &plusmn;.</p>
+
+    <p style="margin-top:1.4rem">This table has no space in it. It is a list of numbers about readings. And the number of dimensions is not something the table assumes, it is something you read off afterwards as its <b>rank</b>, which comes out three. That is not a trick to escape a circle: it is how the corpus itself produces space, as a rank-three Gram quotient of the same port structure.</p>
+  </section>
+
+  <section>
+    <h2>Where the twelve comes from</h2>
+
+    <p class="lede">Two conditions, both of them only restatements of "assume nothing further." Neither determines its own unknown. Together they have one solution.</p>
+
+    <h3>Compare twice and return</h3>
+    <p>Comparing through the table twice must bring you back where you started, up to scale. That is the coherence of the dipole's own &plusmn;, and it says no direction of comparison is preferred. For the icosahedral table it holds exactly: the table squared is five times the identity. Because the diagonal is blank the entries must cancel, so the two eigenvalues are equal and opposite with equal multiplicities, which forces the readings to number exactly twice the rank.</p>
+
+    <h3>Nothing more fits</h3>
+    <p>The system is maximal: no further equally-correlated reading can be slipped in. That is Gerzon's classical ceiling on equiangular lines, d(d+1)/2.</p>
+
+    <div class="crossing full">
+      <svg viewBox="0 0 300 200" role="img" aria-label="Two curves plotted against dimension. The line n equals two d and the curve n equals d times d plus one over two meet at exactly one point, dimension three, count six.">
+        <line x1="36" y1="24" x2="36" y2="180" stroke="currentColor" stroke-width="1" opacity="0.22"></line>
+        <line x1="36" y1="180" x2="286" y2="180" stroke="currentColor" stroke-width="1" opacity="0.22"></line>
+
+        <polyline points="36,162.7 276,110.7" fill="none" stroke="var(--accent-2)" stroke-width="2"></polyline>
+        <polyline points="36,167.0 76,154.0 116,136.7 156,115.0 196,89.0 236,58.7 276,24.0"
+                  fill="none" stroke="var(--accent)" stroke-width="2"></polyline>
+
+        <circle cx="76" cy="154" r="4.5" fill="var(--flag)"></circle>
+        <line x1="76" y1="154" x2="76" y2="180" stroke="var(--flag)" stroke-width="1" stroke-dasharray="2 2"></line>
+
+        <text x="76" y="194" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="var(--flag)">d = 3</text>
+        <text x="92" y="150" font-family="IBM Plex Mono, monospace" font-size="9" fill="var(--flag)">n = 6</text>
+        <text x="200" y="128" font-family="IBM Plex Mono, monospace" font-size="9" fill="var(--accent-2)">n = 2d</text>
+        <text x="186" y="52" font-family="IBM Plex Mono, monospace" font-size="9" fill="var(--accent)">n = d(d+1)/2</text>
+        <text x="20" y="184" font-family="IBM Plex Mono, monospace" font-size="8" fill="currentColor" opacity="0.5">0</text>
+        <text x="288" y="184" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="8" fill="currentColor" opacity="0.5">d &#8594;</text>
+      </svg>
+
+      <p class="solve">
+        n = 2d<br>
+        n = d(d+1)/2<br>
+        &rArr;&nbsp; 2d = d(d+1)/2<br>
+        &rArr;&nbsp; 4 = d + 1<br>
+        &rArr;&nbsp; <b>d = 3</b>, &nbsp;n = 6 axes<br>
+        &rArr;&nbsp; <b>12 ports</b>, 30 seams, 20 faces
+      </p>
+    </div>
+
+    <p style="margin-top:1.6rem">No other dimension satisfies both. Two is ruled out because it would need four axes and only three fit. Four would need eight and only six fit. Seven would need fourteen and admits twenty-eight, so it is not maximal. Three is the only place the two conditions meet, and it is the one dimension where a maximally symmetric system exactly saturates the ceiling.</p>
+
+    <p>The dimension and the port count turn out to be each other's answer. That is the shape of the two-equation fixed point in section 3 of the corpus's own essay, arriving at the rung it otherwise has to assume.</p>
+  </section>
+
+  <section>
+    <h2>What was checked</h2>
+    <p class="lede">Everything drawn on this page was computed rather than asserted. These are the results.</p>
+
+    <dl class="verified full">
+      <div><dt>Hopf inverse</dt><dd>error 6.7e&#8722;16</dd></div>
+      <div><dt>Fibers are circles</dt><dd>out of plane 1.3e&#8722;15</dd></div>
+      <div><dt>All 66 pairs link</dt><dd>1, to 7e&#8722;4</dd></div>
+      <div><dt>Pairwise angle</dt><dd>63.4349&deg; = arccos 1/&#8730;5</dd></div>
+      <div><dt>Frame operator</dt><dd>exactly 2&middot;I</dd></div>
+      <div><dt>State recovery</dt><dd>exact from 6 readings</dd></div>
+      <div><dt>Table squared</dt><dd>exactly 5&middot;I</dd></div>
+      <div><dt>Gram rank</dt><dd>3</dd></div>
+    </dl>
+
+    <div class="flag" style="margin-top:2rem">
+      <span class="flag-label">What this is, and is not</span>
+      <p>This page is not a reading of the corpus. It is a proposal built in conversation alongside it, and the load-bearing premise, that an observer is an assembly of dipoles, is a choice rather than a result. Everything above follows from that choice; none of it establishes it.</p>
+      <p>The Hopf layer is the most speculative floor of the three. Reading the fiber as the observer's invisible internal phase is an interpretation of the inverse-port involution, not a derivation of it, and pairing opposite charges spends the one topological invariant that made a single-monopole reading attractive.</p>
+      <p>The corpus states twelve ports inside A1 as axiom content. If the argument on this page holds, that clause becomes a consequence instead. That would be worth something, and it is not yet a proof.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>Companion to <a href="origin-chain.html">the origin chain</a>, which is a faithful reading of the corpus. This page is the speculative one; the two are kept apart on purpose.</p>
+    <p>Self-contained: one file, no build step, no library. Geometry computed in the page from the icosahedral vertices, with the projection axis through a face centre so that every port sits 37.3774&deg; from the pole.</p>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var TAU = Math.PI * 2;
+  var PHI = (1 + Math.sqrt(5)) / 2;
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- small vector helpers ---------- */
+  function norm(v) { var m = Math.hypot(v[0], v[1], v[2]); return [v[0]/m, v[1]/m, v[2]/m]; }
+  function dot(a, b) { return a[0]*b[0] + a[1]*b[1] + a[2]*b[2]; }
+  function cross(a, b) {
+    return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
+  }
+
+  /* ---------- the twelve ports ---------- */
+  var ports = [];
+  for (var s1 = -1; s1 <= 1; s1 += 2) {
+    for (var s2 = -1; s2 <= 1; s2 += 2) {
+      ports.push(norm([0, s1, s2 * PHI]));
+      ports.push(norm([s1, s2 * PHI, 0]));
+      ports.push(norm([s1 * PHI, 0, s2]));
+    }
+  }
+
+  /* Rotate so one face centre lands on the stereographic pole (0,0,-1).
+     That is the deepest hole in the port set, which keeps every fiber
+     bounded and gives the figure a three-fold axis toward the viewer. */
+  (function alignFaceCentre() {
+    var i, j, k, best = null, bestD = -2;
+    for (i = 0; i < 12; i++) for (j = i+1; j < 12; j++) for (k = j+1; k < 12; k++) {
+      var c = norm([
+        (ports[i][0]+ports[j][0]+ports[k][0])/3,
+        (ports[i][1]+ports[j][1]+ports[k][1])/3,
+        (ports[i][2]+ports[j][2]+ports[k][2])/3
+      ]);
+      var m = Math.min(dot(c, ports[i]), dot(c, ports[j]), dot(c, ports[k]));
+      // a genuine face: its three ports are mutually nearest neighbours
+      if (m > 0.79 && m > bestD) { bestD = m; best = c; }
+    }
+    var tgt = [0, 0, -1], ax = cross(best, tgt), s = Math.hypot(ax[0], ax[1], ax[2]);
+    if (s < 1e-9) { return; }
+    var c0 = dot(best, tgt);
+    ax = [ax[0]/s, ax[1]/s, ax[2]/s];
+    ports = ports.map(function (v) {
+      var kk = cross(ax, v), d = dot(ax, v);
+      return [
+        v[0]*c0 + kk[0]*s + ax[0]*d*(1-c0),
+        v[1]*c0 + kk[1]*s + ax[1]*d*(1-c0),
+        v[2]*c0 + kk[2]*s + ax[2]*d*(1-c0)
+      ];
+    });
+  })();
+
+  /* ---------- pair the ports into six dipole axes ---------- */
+  var axes = [];           // [portIndexPlus, portIndexMinus]
+  var axisOf = new Array(12);
+  ports.forEach(function (p, i) {
+    for (var a = 0; a < axes.length; a++) {
+      if (dot(p, ports[axes[a][0]]) < -0.99) { axes[a][1] = i; axisOf[i] = a; return; }
+    }
+    axisOf[i] = axes.length;
+    axes.push([i, -1]);
+  });
+
+  /* ---------- Hopf preimage, stereographically projected ---------- */
+  function rawFiber(p, n) {
+    var x = p[0], y = p[1], z = p[2];
+    var r1 = Math.sqrt((1 + z) / 2);
+    var den = Math.sqrt(2 * (1 + z));
+    var cr = x / den, ci = -y / den;
+    var out = [];
+    for (var i = 0; i < n; i++) {
+      var t = TAU * i / n, ct = Math.cos(t), st = Math.sin(t);
+      var a = ct * r1, b = st * r1;              // e^{it} z1, z1 real
+      var c = ct * cr - st * ci, d = st * cr + ct * ci;  // e^{it} z2
+      var s = 1 / (1 - d);                        // project from (0,0,0,1)
+      out.push([a * s, b * s, c * s]);
+    }
+    return out;
+  }
+
+  /* Uniform steps in t are not uniform after projection, so respace by
+     arc length: otherwise the wide side of each circle reads as a polygon. */
+  function byArcLength(pts, m) {
+    var n = pts.length, cum = [0], i;
+    for (i = 1; i <= n; i++) {
+      var a = pts[i-1], b = pts[i % n];
+      cum.push(cum[i-1] + Math.hypot(b[0]-a[0], b[1]-a[1], b[2]-a[2]));
+    }
+    var total = cum[n], out = [], j = 0;
+    for (i = 0; i < m; i++) {
+      var target = total * i / m;
+      while (j < n - 1 && cum[j+1] < target) { j++; }
+      var seg = cum[j+1] - cum[j];
+      var f = seg > 0 ? (target - cum[j]) / seg : 0;
+      var p0 = pts[j], p1 = pts[(j+1) % n];
+      out.push([p0[0]+(p1[0]-p0[0])*f, p0[1]+(p1[1]-p0[1])*f, p0[2]+(p1[2]-p0[2])*f]);
+    }
+    return out;
+  }
+
+  var SAMPLES = 160, ARCS = 20, PER = SAMPLES / ARCS;
+  var fibers = ports.map(function (p) { return byArcLength(rawFiber(p, 1600), SAMPLES); });
+
+  var extent = 0;
+  fibers.forEach(function (f) {
+    f.forEach(function (q) { extent = Math.max(extent, Math.hypot(q[0], q[1], q[2])); });
+  });
+
+  /* Stereographic projection always spreads the fiber sizes: the ports
+     nearest the projection pole blow up to radius ~6 while the far ones
+     sit near 1.4. Fitting the largest would shrink the rest to nothing,
+     so fit the body of the figure and let the three big ones sweep out
+     of frame, which is how this object actually looks. */
+  var fitR = extent * 0.56;
+
+  /* ---------- camera ---------- */
+  var yaw = 0.6, pitch = -0.42, spinning = !reduce, selected = -1;
+
+  function rotate(q) {
+    var cy = Math.cos(yaw), sy = Math.sin(yaw);
+    var cp = Math.cos(pitch), sp = Math.sin(pitch);
+    var x = q[0] * cy - q[2] * sy;
+    var z = q[0] * sy + q[2] * cy;
+    var y = q[1] * cp - z * sp;
+    z = q[1] * sp + z * cp;
+    return [x, y, z];
+  }
+
+  function token(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+
+  function fit(canvas) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = canvas.clientWidth || 480;
+    var h = Math.round(w * (canvas.height / canvas.width)) || w;
+    if (canvas.width !== Math.round(w * dpr) || canvas.height !== Math.round(h * dpr)) {
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+    }
+    canvas.style.height = h + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h };
+  }
+
+  /* ---------- the tangle ---------- */
+  var fibreCanvas = document.getElementById("fibers");
+
+  function drawFibers() {
+    var f = fit(fibreCanvas), ctx = f.ctx, W = f.w, H = f.h;
+    var bg = token("--fig-bg", "#F7F9F8");
+    var line = token("--fig-line", "#14544F");
+    var dim = token("--fig-dim", "#9FB6B3");
+    var hot = token("--fig-hot", "#0B1F1E");
+
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    var scale = Math.min(W, H) * 0.46 / fitR;
+    var cx = W / 2, cy = H / 2;
+    var cam = 3.4 * extent;
+
+    // project every sample once
+    var proj = fibers.map(function (fib) {
+      return fib.map(function (q) {
+        var r = rotate(q);
+        var persp = cam / (cam - r[2]);
+        return { x: cx + r[0] * scale * persp, y: cy - r[1] * scale * persp, z: r[2] };
+      });
+    });
+
+    /* Depth-sort whole ARCS, not single segments. A per-segment halo
+       erases the neighbouring segments of its own fiber, because they are
+       nowhere near each other in the sorted order, which shreds every
+       curve into dashes.
+
+       Each arc also runs one segment past its nominal ends. Sharing only
+       a single endpoint is not enough: the next arc's halo overhangs the
+       joint by about half its width and its stroke starts exactly at the
+       joint, so that sliver is erased and never repainted. The extra
+       segment at each end puts stroke back over everything the halo took. */
+    var arcs = [];
+    for (var i = 0; i < proj.length; i++) {
+      for (var a = 0; a < ARCS; a++) {
+        var pts = [], zsum = 0;
+        for (var k = -1; k <= PER + 1; k++) {
+          var p = proj[i][(a * PER + k + SAMPLES) % SAMPLES];
+          pts.push(p);
+          zsum += p.z;
+        }
+        arcs.push({ i: i, pts: pts, z: zsum / pts.length });
+      }
+    }
+    arcs.sort(function (p, q) { return p.z - q.z; });
+
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    for (var s = 0; s < arcs.length; s++) {
+      var g = arcs[s];
+      var on = selected < 0 || axisOf[g.i] === selected;
+      var depth = (g.z + extent) / (2 * extent);
+      var width = (1.0 + depth * 2.4) * (on ? 1 : 0.5);
+
+      ctx.beginPath();
+      ctx.moveTo(g.pts[0].x, g.pts[0].y);
+      for (var k2 = 1; k2 < g.pts.length; k2++) { ctx.lineTo(g.pts[k2].x, g.pts[k2].y); }
+
+      /* The halo cuts whatever lies behind, which is what makes the
+         over-and-under of the linking readable at all. But a dimmed arc
+         must not cut: its halo is opaque even when its stroke is at 26%,
+         so it would chop the highlighted pair into dashes. With a dipole
+         selected, only the pair carries a halo. */
+      if (on) {
+        ctx.strokeStyle = bg;
+        ctx.lineWidth = width + 2.8;
+        ctx.globalAlpha = 1;
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = on ? (selected >= 0 ? hot : line) : dim;
+      ctx.lineWidth = width;
+      ctx.globalAlpha = on ? (0.42 + depth * 0.58) : 0.26;
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  /* ---------- the screen ---------- */
+  var screenCanvas = document.getElementById("screen");
+
+  function drawScreen() {
+    var f = fit(screenCanvas), ctx = f.ctx, W = f.w, H = f.h;
+    var bg = token("--fig-bg", "#F7F9F8");
+    var line = token("--fig-line", "#14544F");
+    var dim = token("--fig-dim", "#9FB6B3");
+    var hot = token("--fig-hot", "#0B1F1E");
+
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    var R = Math.min(W, H) * 0.34;
+    var cx = W / 2, cy = H / 2;
+
+    ctx.strokeStyle = dim;
+    ctx.globalAlpha = 0.65;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, TAU);
+    ctx.stroke();
+
+    var pts = ports.map(function (p) {
+      var r = rotate(p);
+      return { x: cx + r[0] * R, y: cy - r[1] * R, z: r[2] };
+    });
+
+    // six diameters: the dipole axes
+    axes.forEach(function (pair, a) {
+      var on = selected < 0 || selected === a;
+      var p = pts[pair[0]], q = pts[pair[1]];
+      ctx.strokeStyle = on ? (selected >= 0 ? hot : line) : dim;
+      ctx.globalAlpha = on ? 0.75 : 0.22;
+      ctx.lineWidth = on && selected >= 0 ? 1.8 : 1;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(q.x, q.y);
+      ctx.stroke();
+    });
+
+    pts.map(function (p, i) { return { p: p, i: i }; })
+       .sort(function (m, n) { return m.p.z - n.p.z; })
+       .forEach(function (m) {
+         var on = selected < 0 || axisOf[m.i] === selected;
+         var depth = (m.p.z + 1) / 2;
+         ctx.globalAlpha = on ? (0.4 + depth * 0.6) : 0.25;
+         ctx.fillStyle = on ? (selected >= 0 ? hot : line) : dim;
+         ctx.beginPath();
+         ctx.arc(m.p.x, m.p.y, (R * 0.042) * (0.75 + depth * 0.5) * (on && selected >= 0 ? 1.4 : 1), 0, TAU);
+         ctx.fill();
+       });
+    ctx.globalAlpha = 1;
+  }
+
+  function draw() { drawFibers(); drawScreen(); }
+
+  /* ---------- drag to turn ---------- */
+  function dragger(el) {
+    var active = false, lx = 0, ly = 0;
+    el.addEventListener("pointerdown", function (e) {
+      active = true; lx = e.clientX; ly = e.clientY;
+      el.setPointerCapture(e.pointerId);
+    });
+    el.addEventListener("pointermove", function (e) {
+      if (!active) { return; }
+      yaw += (e.clientX - lx) * 0.008;
+      pitch += (e.clientY - ly) * 0.008;
+      pitch = Math.max(-1.45, Math.min(1.45, pitch));
+      lx = e.clientX; ly = e.clientY;
+      if (!spinning) { draw(); }
+    });
+    ["pointerup", "pointercancel"].forEach(function (ev) {
+      el.addEventListener(ev, function () { active = false; });
+    });
+  }
+  dragger(fibreCanvas);
+  dragger(screenCanvas);
+
+  /* ---------- controls ---------- */
+  var buttons = Array.prototype.slice.call(document.querySelectorAll(".controls button[data-axis]"));
+  var rSel = document.getElementById("r-sel");
+  var rLink = document.getElementById("r-link");
+
+  function select(a) {
+    selected = a;
+    buttons.forEach(function (b) {
+      b.setAttribute("aria-pressed", String(Number(b.dataset.axis) === a));
+    });
+    rSel.textContent = a < 0 ? "all twelve" : "axis " + (a + 1) + ", 2 ports";
+    rLink.textContent = a < 0 ? "1 each" : "1";
+    if (!spinning) { draw(); }
+  }
+  buttons.forEach(function (b) {
+    b.addEventListener("click", function () { select(Number(b.dataset.axis)); });
+  });
+
+  var spinBtn = document.getElementById("spin");
+  spinBtn.setAttribute("aria-pressed", String(spinning));
+  spinBtn.addEventListener("click", function () {
+    spinning = !spinning;
+    spinBtn.setAttribute("aria-pressed", String(spinning));
+    if (spinning) { last = performance.now(); requestAnimationFrame(frame); } else { draw(); }
+  });
+
+  /* ---------- the agreement table ---------- */
+  (function buildGram() {
+    var t = document.getElementById("gram");
+    var reps = axes.map(function (pair) { return ports[pair[0]]; });
+    var head = "<thead><tr><th></th>";
+    for (var c = 0; c < 6; c++) { head += "<th>" + (c + 1) + "</th>"; }
+    head += "</tr></thead><tbody>";
+    var body = "";
+    for (var i = 0; i < 6; i++) {
+      body += "<tr><th>" + (i + 1) + "</th>";
+      for (var j = 0; j < 6; j++) {
+        if (i === j) { body += '<td class="diag">&mdash;</td>'; }
+        else {
+          var v = dot(reps[i], reps[j]);
+          body += "<td>" + (v < 0 ? "&minus;" : "+") + Math.abs(v).toFixed(4) + "</td>";
+        }
+      }
+      body += "</tr>";
+    }
+    t.innerHTML = head + body + "</tbody>" + t.innerHTML;
+  })();
+
+  /* ---------- run ---------- */
+  var last = performance.now();
+  function frame(now) {
+    if (!spinning) { return; }
+    yaw += (now - last) * 0.00011;
+    last = now;
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  draw();
+  if (spinning) { requestAnimationFrame(frame); }
+
+  var resizeTimer;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(draw, 80);
+  });
+})();
+</script>
+
+</body>
+</html>
